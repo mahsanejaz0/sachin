@@ -1,0 +1,85 @@
+/* label {
+    color: white !important;
+} */
+
+.login_page .css-1tkebpg-MuiFormLabel-root-MuiInputLabel-root.Mui-error {
+    color: white !important;
+}
+
+.login_page .css-1x2navt-MuiFormLabel-root-MuiInputLabel-root.Mui-error {
+    color: white !important;
+}
+
+.login_page .css-1wbgm08-MuiInputBase-root-MuiOutlinedInput-root {
+    font-size: .875rem;
+    font-family: NoirPro, Arial;
+    font-weight: 400;
+    line-height: 1.4375em;
+    color: white !important;
+    box-sizing: border-box;
+    position: relative;
+    cursor: text;
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    border-radius: 5px;
+}
+
+.login_page .css-u7zwh2-MuiInputBase-input-MuiOutlinedInput-input {
+    font: inherit;
+    letter-spacing: inherit;
+    color: currentColor;
+    padding: 4px 0 5px;
+    border: 0;
+    box-sizing: content-box;
+    background: none;
+    height: 1.4375em;
+    margin: 0;
+    -webkit-tap-highlight-color: transparent;
+    display: block;
+    min-width: 0;
+    width: 100%;
+    -webkit-animation-name: mui-auto-fill-cancel;
+    animation-name: mui-auto-fill-cancel;
+    -webkit-animation-duration: 10ms;
+    animation-duration: 10ms;
+    padding: 16.5px 14px;
+}
+
+.login_page{
+    border-radius: 0 !important;
+    height: 102vh;
+    width: 107.4% !important;
+    margin-left: -48px;
+    margin-right: -48px;
+    margin-top: -48px;
+    margin-bottom: -48px;
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
+}
+.login_page .css-1d3z3hw-MuiOutlinedInput-notchedOutline{
+    border-color:#fff
+}
+.login_page label{
+    color: #fff !important;
+}
+
+@media screen and (max-width: 767px) {
+    .login_page{
+        width: 100% !important;
+        margin-left: 0;
+        margin-right:0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .logo_box{
+        display: none;
+    }
+  }

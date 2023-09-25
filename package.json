@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "clone": "^2.1.2",
+    "concurrently": "^8.2.1"
+  }
+}
