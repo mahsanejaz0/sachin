@@ -1292,7 +1292,7 @@ router.post("/deposit", async (req, res) => {
       }
       const Cinfo = await client.createTransaction(CoinpaymentsCreateTransactionOpts)
 
-      await Qry(`INSERT INTO create_deposit (user_id, amount, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?)`, [authUser,Cinfo.amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
+      await Qry(`INSERT INTO create_deposit (user_id, amount,amount_usd, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?,?)`, [authUser,Cinfo.amount,amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
       res.status(200).json({
         status: "success",
         data: Cinfo,
