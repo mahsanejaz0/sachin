@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto-js");
 const fs = require("fs");
-const chargebee = require("chargebee");
+const Coinpayments = require("coinpayments");
 const { CleanHTMLData, CleanDBData } = require("../config/database/connection");
 const emailTemplate = require("../helpers/emailTemplates/emailTemplates");
 const transporter = require("../config/mail/mailconfig");
@@ -19,8 +19,9 @@ const {
   fetchUsers,
 } = require("../helpers/functions");
 const secretKey = process.env.jwtSecretKey;
-const sitename = process.env.sitename;
-const sitekey = process.env.sitekey;
+const CPKEY = process.env.CPKEY;
+const CPSECRET = process.env.CPSECRET;
+const CPCURRENCY = process.env.CPCURRENCY;
 
 const backoffice_link = "https://aura.threearrowstech.com/";
 const weblink = "https://dashboard.skytsevni.net/";
@@ -29,13 +30,16 @@ const emailImagesLink =
 const noreply_email = "mails@skytsevni.net";
 const company_name = "Bank Of Tether";
 
-chargebee.configure({
-  site: sitename,
-  api_key: sitekey,
-});
+const CoinpaymentsCredentials = {
+  key: CPKEY,
+  secret: CPSECRET
+};
+
+const client = new Coinpayments(CoinpaymentsCredentials)
 
 // Create a multer middleware for handling the file upload
 const upload = multer();
+
 
 //register new user
 router.post("/register", async (req, res) => {
@@ -232,7 +236,7 @@ router.post("/login", async (req, res) => {
     if (selectUserResult.length === 0) {
       res.json({
         status: "error",
-        message: "Invalid login details.",
+        message: "Invalid account login.",
       });
       return;
     }
@@ -247,7 +251,7 @@ router.post("/login", async (req, res) => {
     if (!passwordMatch) {
       res.json({
         status: "error",
-        message: "Invalid login details.",
+        message: "Invalid email or password.",
       });
       return;
     } else if (user.emailstatus === "unverified") {
@@ -289,7 +293,7 @@ router.post("/login", async (req, res) => {
     console.error("Error executing query:", error);
     res.json({
       status: "error",
-      message: "Server error occurred",
+      message: error.message,
     });
   }
 });
@@ -1279,34 +1283,82 @@ router.post("/deposit", async (req, res) => {
         });
         return;
       }
+      const CoinpaymentsCreateTransactionOpts = {
+        currency1: 'USD',
+        currency2: CPCURRENCY,
+        amount: amount,
+        buyer_email: userData.email,
+        ipn_url: 'https://nodeapp.mytether.co/user/api/ipn',
+      }
+      const Cinfo = await client.createTransaction(CoinpaymentsCreateTransactionOpts)
 
-      const settingsData = await Qry(
-        "SELECT * FROM `setting` WHERE keyname IN (?)",
-        [
-          "deposit_fee"
-        ]
-      );
-      const depositFee = settingsData[0].keyvalue;
-
-      let depositAmount = amount - ((amount / 100) * depositFee)
-
-      const updateUser = await Qry("update usersdata set current_balance = current_balance + ? where id = ?", [depositAmount, authUser]);
-      insertTransaction = await Qry(
-        "insert into transaction ( receiverid, senderid, amount, final_amount, type, details) values ( ? , ? , ? , ? ,? , ?)",
-        [
-          0,
-          authUser,
-          amount,
-          depositAmount,
-          "deposit",
-          "You have deposit $" + amount + " in your E-Wallet",
-        ]
-      );
+      await Qry(`INSERT INTO create_deposit (user_id, amount, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?)`, [authUser,Cinfo.amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
       res.status(200).json({
         status: "success",
-        message: "You have deposit balance to your E-Wallet successfully.",
+        data: Cinfo,
       });
+
+      // const settingsData = await Qry(
+      //   "SELECT * FROM `setting` WHERE keyname IN (?)",
+      //   [
+      //     "deposit_fee"
+      //   ]
+      // );
+      // const depositFee = settingsData[0].keyvalue;
+
+      // let depositAmount = amount - ((amount / 100) * depositFee)
+
+      // const updateUser = await Qry("update usersdata set current_balance = current_balance + ? where id = ?", [depositAmount, authUser]);
+      // insertTransaction = await Qry(
+      //   "insert into transaction ( receiverid, senderid, amount, final_amount, type, details) values ( ? , ? , ? , ? ,? , ?)",
+      //   [
+      //     0,
+      //     authUser,
+      //     amount,
+      //     depositAmount,
+      //     "deposit",
+      //     "You have deposit $" + amount + " in your E-Wallet",
+      //   ]
+      // );
+
     }
+  } catch (e) {
+    console.log(e.message)
+    res.status(500).json({ status: "error", message: e.message });
+  }
+});
+
+
+//get coinpayment transaction details
+router.post("/gettransactiondetails", async (req, res) => {
+  try {
+    const postData = req.body;
+    const authUser = await checkAuthorization(req, res);
+    if (authUser) {
+      const txid = postData.txid
+
+      const CoinpaymentsGetTxOpts =  {
+        txid: txid
+      }
+      const txDetails = await client.getTx(CoinpaymentsGetTxOpts)
+
+      res.status(200).json({
+        status: "success",
+        data: txDetails,
+      });
+
+    }
+  } catch (e) {
+    console.log(e.message)
+    res.status(500).json({ status: "error", message: e.message });
+  }
+});
+
+
+router.post("/ipn", async (req, res) => {
+  try {
+    const postData = req.body;
+   
   } catch (e) {
     console.log(e.message)
     res.status(500).json({ status: "error", message: e.message });
