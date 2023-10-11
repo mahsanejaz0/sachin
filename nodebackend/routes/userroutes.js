@@ -1358,7 +1358,13 @@ router.post("/gettransactiondetails", async (req, res) => {
 router.post("/ipn", async (req, res) => {
   try {
     const postData = req.body;
-   
+    await Qry(`insert into dummy(d_data) values (${JSON.stringify(postData)})`)
+    const txnData = await Qry(`select * from create_deposit where transaction_id = ?`, [postData.txn_id])
+    if(postData.txn_id === txnData[0].transaction_id && txnData[0].status === "pending")
+    {
+      const updateDeposit = await Qry(`update create_deposit set status = ? where transaction_id = ?`,[postData.status_text, postData.txn_id])
+      const updateUser = await Qry(`update usersdata set current_balance = current_balance + ? where transaction_id = ?`,[postData.status_text, postData.txn_id])
+    }
   } catch (e) {
     console.log(e.message)
     res.status(500).json({ status: "error", message: e.message });
