@@ -3,10 +3,10 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import JumboDemoCard from '@jumbo/components/JumboDemoCard/JumboDemoCard';
 import { getdepositlist, postRequest } from 'backendServices/ApiCalls';
-import { Chip,IconButton, Tooltip, Grid } from '@mui/material';
+import { Chip, IconButton, Tooltip, Grid } from '@mui/material';
 import { FileCopy as FileCopyIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 
-const VISIBLE_FIELDS = ['sr', 'amount', 'hash', 'status','details', 'createdat'];
+const VISIBLE_FIELDS = ['sr', 'amount', 'hash', 'status', 'details', 'createdat'];
 
 const DepositReport = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -15,8 +15,8 @@ const DepositReport = () => {
 
   let params = {
     status: 'all',
-    type:'deposit',
-    usertype:'sender'
+    type: 'deposit',
+    usertype: 'sender'
   };
 
   const UsersData = () => {
@@ -70,141 +70,93 @@ const DepositReport = () => {
     },
   };
 
+  const initialState = {
+    initialState: {
+      columns: {
+        columnVisibilityModel: {
+          id: false,
+          avatar: false,
+          website: false,
+          email: false,
+          phone: false,
+          username: false,
+          city: false,
+          company: false,
+          position: false,
+          lastUpdated: false,
+          salary: false,
+        }
+      }
+    }
+  }
+
+  const columns = [
+    {
+      field: "id",
+      headerName: "ID",
+      dataGeneratorUniquenessEnabled: true,
+      width: 200,
+      editable: true,
+      groupable: false,
+      aggregable: false,
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      dataGeneratorUniquenessEnabled: true,
+      width: 200,
+      editable: true,
+      groupable: false,
+      aggregable: false,
+    },
+    {
+      field: "final_amount",
+      headerName: "Final Amount",
+      dataGeneratorUniquenessEnabled: true,
+      width: 200,
+      editable: true,
+      groupable: false,
+      aggregable: false,
+    },
+    {
+      field: "details",
+      headerName: "Details",
+      dataGeneratorUniquenessEnabled: true,
+      width: 250,
+      editable: true,
+      groupable: false,
+      aggregable: false,
+    },
+    {
+      field: "createdat",
+      headerName: "Date",
+      dataGeneratorUniquenessEnabled: true,
+      width: 200,
+      editable: true,
+      groupable: false,
+      aggregable: false,
+    }
+
+  ]
+
 
 
   return (
-    <JumboDemoCard title={'Deposit Summary'} wrapperSx={{ backgroundColor: 'background.paper', pt: 0 }}>
-
-      <Box sx={{ height: 400, width: 1 }}>
+    <JumboDemoCard
+      title={"Deposit Summary"}
+      wrapperSx={{ backgroundColor: 'background.paper', pt: 0 }}
+    >
+      <Box sx={{ height: 460, width: 1 }}>
         <DataGrid
           initialState={{
-            initialState: {
-              columns: {
-                columnVisibilityModel: {
-                  id: false,
-                  avatar: false,
-                  website: false,
-                  email: false,
-                  phone: false,
-                  username: false,
-                  city: false,
-                  company: false,
-                  position: false,
-                  lastUpdated: false,
-                  salary: false,
-                },
-              },
-            },
-            pagination: { paginationModel: { pageSize: 24 } },
+            initialState,
+            pagination: { paginationModel: { pageSize: 6 } },
           }}
-          rows={rowsWithId}
-          getRowId={(row) => generateRowId()}
-          columns={[
-            ...VISIBLE_FIELDS.map((field) => {
-              if (field === 'sr') {
-                return {
-                  field,
-                  headerName: 'Sr',
-                  width: 150,
-                  renderCell: (params) => <strong>{params.row.id}</strong>,
-                };
-              } else if (field === 'amount') {
-                return {
-                  field,
-                  headerName: 'Amount',
-                  width: 150,
-                };
-              } else if (field === 'status') {
-                return {
-                  field,
-                  headerName: 'Status',
-                  width: 150,
-                  renderCell: (params) => (
-                    <Chip
-                      label={params.value}
-                      color={params.value === 'approved' ? 'success' 
-                      : params.value === 'rejected' ? 'error'
-                      : params.value === 'pending' ? 'warning'
-                      :
-                      'default'  
-                      }
-                      size="small"
-                    />
-                  ),
-                };
-              }else if (field === 'details') {
-                return {
-                  field,
-                  headerName: 'Details',
-                  width: 250,
-                };
-              } else if (field === 'createdat') {
-                return {
-                  field,
-                  headerName: 'Date (YYYY-MM-DD)',
-                  width: 200,
-                  renderCell:(params) => {
-                    const dateObject = new Date(params.row.createdat);
-                  // Extract the year, month, and day components
-                  const year = dateObject.getFullYear();
-                  const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-based, so add 1
-                  const day = dateObject.getDate().toString().padStart(2, '0');
-                  // Create a formatted date string (e.g., "YYYY-MM-DD")
-                  const formattedDate = `${year}-${month}-${day}`;
-                  return formattedDate
-                  }
-                };
-              }
-              else if (field === 'hash') {
-                return {
-                  field,
-                  headerName: 'Hash Code',
-                  width: 150,
-                  renderCell: (params) => {
-                    const isCopied = copiedRows.includes(params.row.id);
-                    
-                    const handleCopyClick = () => {
-                      navigator.clipboard.writeText(params.value)
-                        .then(() => {
-                          setCopiedRows((prevCopiedRows) => [...prevCopiedRows, params.row.id]);
-                        })
-                        .catch((error) => {
-                          console.error('Copy failed:', error);
-                        });
-                    };
-          
-                    return (
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {isCopied ? (
-                          <CheckCircleIcon style={{ marginRight: '4px', color: 'green' }} />
-                        ) : (
-                          <Tooltip title="Copy Hash" placement="top">
-                            <IconButton
-                              onClick={handleCopyClick}
-                              size="small"
-                              style={{ marginRight: '4px' }}
-                            >
-                              <FileCopyIcon />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        <span>{params.value}</span>
-                      </div>
-                    );
-                  },
-                };
-              }
-              return {
-                field,
-                headerName: field,
-                width: 150,
-              };;
-            }),
-            
-          ]}
+          rows={rows}
+          columns={columns}
           slots={{ toolbar: GridToolbar }}
           sx={gridDesign}
-          pageSizeOptions={[24, 48, 96]}
+          pageSizeOptions={[6, 12, 18, 24, 30]}
           slotProps={{
             toolbar: {
               showQuickFilter: true,

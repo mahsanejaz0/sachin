@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import JumboDemoCard from '@jumbo/components/JumboDemoCard/JumboDemoCard';
-import { deployuser, getpayoutlist, postRequest, rejectpayment } from 'backendServices/ApiCalls';
-import { Chip,IconButton, Tooltip, Grid } from '@mui/material';
+import { payoutSummaryApi, getpayoutlist, postRequest, rejectpayment } from 'backendServices/ApiCalls';
+import { Chip, IconButton, Tooltip, Grid } from '@mui/material';
 import Swal from 'sweetalert2';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { FileCopy as FileCopyIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 
-const VISIBLE_FIELDS = ['sr','receiverusername', 'amount', 'payoutaccount1', 'payoutaccount2', 'createdat'];
+const VISIBLE_FIELDS = ['sr', 'receiverusername', 'amount', 'final_amount', 'payoutaccount1', 'payoutaccount2', 'createdat'];
 
 
 const useSweetAlert = (UsersData) => {
@@ -25,37 +25,37 @@ const useSweetAlert = (UsersData) => {
 
     return new Promise((resolve) => {
       let params = {
-        action:'approved',
+        action: 'approved',
         tid: id,
         investmentamount: amount,
       };
 
-    postRequest(
-      '/payoutaction',
-      params,
-      (response) => {
-        if (response?.data?.status === 'success') {
-          Swal.fire({
-            title: 'payout Approved',
-            text: 'payout approved successfully',
-            icon: 'success',
-            showCancelButton: false,
-            confirmButtonText: 'OK',
-          }).then(() => {
-            setAlertData((prevAlertData) => ({
-              ...prevAlertData,
-              show: false,
-            }));
-          });
-          UsersData();
+      postRequest(
+        '/payoutaction',
+        params,
+        (response) => {
+          if (response?.data?.status === 'success') {
+            Swal.fire({
+              title: 'payout Approved',
+              text: 'payout approved successfully',
+              icon: 'success',
+              showCancelButton: false,
+              confirmButtonText: 'OK',
+            }).then(() => {
+              setAlertData((prevAlertData) => ({
+                ...prevAlertData,
+                show: false,
+              }));
+            });
+            UsersData();
+            resolve()
+          }
+        },
+        (error) => {
+          console.log(error?.response?.data);
           resolve()
         }
-      },
-      (error) => {
-        console.log(error?.response?.data);
-        resolve()
-      }
-    );
+      );
     })
   };
 
@@ -63,37 +63,37 @@ const useSweetAlert = (UsersData) => {
 
     return new Promise((resolve) => {
       let params = {
-        action:'rejected',
+        action: 'rejected',
         tid: id,
         reason: reason,
       };
 
-    postRequest(
-      '/payoutaction',
-      params,
-      (response) => {
-        if (response?.data?.status === 'success') {
-          Swal.fire({
-            title: 'payout Rejected',
-            text: 'with reason "'+reason+'"',
-            icon: 'warning',
-            showCancelButton: false,
-            confirmButtonText: 'OK',
-          }).then(() => {
-            setAlertData((prevAlertData) => ({
-              ...prevAlertData,
-              show: false,
-            }));
-          });
-          UsersData();
+      postRequest(
+        '/payoutaction',
+        params,
+        (response) => {
+          if (response?.data?.status === 'success') {
+            Swal.fire({
+              title: 'payout Rejected',
+              text: 'with reason "' + reason + '"',
+              icon: 'warning',
+              showCancelButton: false,
+              confirmButtonText: 'OK',
+            }).then(() => {
+              setAlertData((prevAlertData) => ({
+                ...prevAlertData,
+                show: false,
+              }));
+            });
+            UsersData();
+            resolve()
+          }
+        },
+        (error) => {
+          console.log(error?.response?.data);
           resolve()
         }
-      },
-      (error) => {
-        console.log(error?.response?.data);
-        resolve()
-      }
-    );
+      );
     })
   };
 
@@ -169,20 +169,15 @@ const PendingPayout = () => {
 
   let params = {
     status: 'pending',
-    type:'payout',
-    usertype:'receiver'
   };
 
 
   const UsersData = () => {
-    postRequest(
-      '/selecttransactions',
-      params,
-      (response) => {
-        if (response?.data?.status === 'success') {
-          setUsersData(response?.data?.data);
-        }
-      },
+    payoutSummaryApi(params, (response) => {
+      if (response?.data?.status === 'success') {
+        setUsersData(response?.data?.data);
+      }
+    },
       (error) => {
         console.log(error?.response?.data);
       }
@@ -197,10 +192,10 @@ const PendingPayout = () => {
     return `row-${Math.random().toString(36).substr(2, 9)}`;
   };
 
-  
+
   const { showSweetAlert, handleApprove, handleReject } = useSweetAlert(UsersData);
 
-  const handleActionClick = (id,amount, action) => {
+  const handleActionClick = (id, amount, action) => {
     setSelectedUserId(id);
     let title = '';
     let description = '';
@@ -209,20 +204,20 @@ const PendingPayout = () => {
 
     if (action === 'approved') {
       title = 'Approve payout';
-      description = `Are you sure you want to approve this payout of Amount $${amount} ?`;
-      confirmFunction = ()=>handleApprove(id,amount);
+      description = `Are you sure you want to approve this payout of amount $${amount} ?`;
+      confirmFunction = () => handleApprove(id, amount);
       variant = 'warning';
     } else if (action === 'rejected') {
       title = 'Reject payout';
-      description = `Are you sure you want to reject this payout mount $${amount} ?`;
+      description = `Are you sure you want to reject this payout of amount $${amount} ?`;
       confirmFunction = (reason) => handleReject(id, amount, reason);
       variant = 'error';
     }
 
-    showSweetAlert(title, description, confirmFunction,variant,action);
+    showSweetAlert(title, description, confirmFunction, variant, action);
   };
 
-  
+
   const rows = usersData;
 
   let idCounter = 1;
@@ -307,7 +302,15 @@ const PendingPayout = () => {
                   renderCell: (params) => <strong>{'$' + params.row.amount}</strong>,
 
                 };
-              }  else if (field === 'createdat') {
+              } else if (field === 'final_amount') {
+                return {
+                  field,
+                  headerName: 'Final Amount',
+                  width: 150,
+                  renderCell: (params) => <strong>{'$' + params.row.final_amount}</strong>,
+
+                };
+              } else if (field === 'createdat') {
                 return {
                   field,
                   headerName: 'Date',
@@ -321,7 +324,7 @@ const PendingPayout = () => {
                   width: 150,
                   renderCell: (params) => {
                     const isCopied = copiedRows.includes(params.row.id);
-                    
+
                     const handleCopyClick = () => {
                       navigator.clipboard.writeText(params.value)
                         .then(() => {
@@ -331,7 +334,7 @@ const PendingPayout = () => {
                           console.error('Copy failed:', error);
                         });
                     };
-          
+
                     return (
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         {isCopied ? (
@@ -367,7 +370,7 @@ const PendingPayout = () => {
                 <>
                   <Tooltip title="Approve" placement="top">
                     <IconButton
-                      onClick={() => handleActionClick(params.row.tid,params.row.amount, 'approved')}
+                      onClick={() => handleActionClick(params.row.tid, params.row.amount, 'approved')}
                       sx={{ color: 'success.main' }}
                     >
                       <AddTaskIcon />
@@ -375,7 +378,7 @@ const PendingPayout = () => {
                   </Tooltip>
                   <Tooltip title="Reject" placement="top">
                     <IconButton
-                      onClick={() => handleActionClick(params.row.tid,params.row.amount, 'rejected')}
+                      onClick={() => handleActionClick(params.row.tid, params.row.amount, 'rejected')}
                       sx={{ color: 'error.main' }}
                     >
                       <CancelIcon />

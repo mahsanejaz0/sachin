@@ -29,7 +29,7 @@ const weblink = "https://adminaura.skytsevni.net/";
 const emailImagesLink =
   "https://threearrowstech.com/projects/quantum/public/images/email-images/";
 const noreply_email = "mails@skytsevni.net";
-const company_name = "Aura";
+const company_name = "Bank Of Tether";
 
 // Create a multer middleware for handling the file upload
 const upload = multer();
@@ -531,17 +531,44 @@ router.post("/getuserslist", async (req, res) => {
   try {
     const authUser = await adminAuthorization(req, res); // Assuming checkAuthorization function checks the authorization token
     if (authUser) {
-    
-        let statuscondition = "";
-        if (req.body.status !== undefined && req.body.status !== null) {
-          statuscondition = `AND status = ${req.body.status}`;
-        }
+      let status;
+      if (req.body.status === 'approved') {
+        status = 'approved';
+      }
+      if (req.body.status === 'pending') {
+        status = 'pending';
+      }
+
       const getUsers = `SELECT emailstatus,
       ud.id as userid, ud.username,ud.randomcode, ud.firstname, ud.lastname,ud.current_balance, ud.email, ud.createdat, ud.mobile, ud.loginstatus
       FROM usersdata ud
-      where usertype = ? ${statuscondition}
+      where usertype = ? and status = ?
       ORDER BY ud.id DESC
       `;
+      const UsersData = await Qry(getUsers, ["user", status]);
+
+      res.json({
+        status: "success",
+        userdata: UsersData,
+      });
+    }
+  } catch (error) {
+    console.error("Error executing query:", error);
+    res.json({
+      status: "error",
+      message: error.message,
+    });
+  }
+});
+
+
+//Get Users List
+router.post("/getusers", async (req, res) => {
+  try {
+    const authUser = await adminAuthorization(req, res); // Assuming checkAuthorization function checks the authorization token
+    if (authUser) {
+
+      const getUsers = `SELECT username, firstname, lastname, email, current_balance from usersdata where usertype = ?`;
       const UsersData = await Qry(getUsers, ["user"]);
 
       res.json({
@@ -829,6 +856,37 @@ router.post("/getsettingsdata", async (req, res) => {
   }
 });
 
+
+router.post("/getcontractsdata", async (req, res) => {
+  const postData = req.body;
+  const keyids = postData.keyids;
+
+  try {
+    const authUser = adminAuthorization(req, res);
+    const contractlist = {};
+    if (authUser) {
+      const settingSelectQuery = `SELECT * FROM contracts WHERE id IN (${keyids})`;
+      const settingSelectResult = await Qry(settingSelectQuery);
+      const settingsdbData = settingSelectResult;
+
+      contractlist["values"] = settingsdbData;
+
+      if (Object.keys(contractlist).length > 0) {
+        res.json({
+          status: "success",
+          data: contractlist,
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error executing query:", error);
+    res.json({
+      status: "error",
+      message: "Server error occurred",
+    });
+  }
+});
+
 //get deposit wallets
 router.post("/getdepositwallets", async (req, res) => {
   try {
@@ -839,8 +897,8 @@ router.post("/getdepositwallets", async (req, res) => {
     if (authUser) {
       const userSelect = await Qry(
         "SELECT id as tid, keyname, keyvalue FROM setting WHERE keyname IN (" +
-          keynames +
-          ")"
+        keynames +
+        ")"
       );
       const userslist = [];
       const usersdata = { entries: [] };
@@ -902,8 +960,8 @@ router.post("/postdepositwallet", upload.single("image"), async (req, res) => {
 
       const insertWallet = await Qry(
         "insert into setting(keyname,keyvalue) values ('depositwallet', '" +
-          insData +
-          "')"
+        insData +
+        "')"
       );
       if (insertWallet.affectedRows > 0) {
         res.json({
@@ -995,11 +1053,37 @@ router.post("/updatesettingsdata", async (req, res) => {
 
         res.json({
           status: "success",
-          message: "settings data is updated successfully",
+          message: "settings data has been updated successfully",
         });
       }
     }
   } catch (error) {
+    console.log(error)
+    res.status(500).json({ status: "error", message: e });
+  }
+});
+
+router.post("/updatecontractsdata", async (req, res) => {
+  const postData = req.body;
+
+  try {
+    const authUser = adminAuthorization(req, res);
+    if (authUser) {
+      console.log(postData.obj)
+      for (const [keyname, value] of Object.entries(postData.obj)) {
+        const updateQuery = `UPDATE contracts SET name = ?, amount = ?, status = ? WHERE id = ?`;
+        const updateParams = [value.name, value.amount, value.status, keyname];
+        await Qry(updateQuery, updateParams);
+      }
+
+      res.json({
+        status: "success",
+        message: "Contracts has been updated successfully",
+      });
+
+    }
+  } catch (error) {
+    console.log(error)
     res.status(500).json({ status: "error", message: e });
   }
 });
@@ -1598,6 +1682,79 @@ router.post("/report", async (req, res) => {
   }
 });
 
+
+router.post("/depositsummary", async (req, res) => {
+  const postData = req.body;
+  const reportType = CleanHTMLData(CleanDBData(postData.type));
+  try {
+    const authUser = await adminAuthorization(req, res); // Assuming checkAuthorization function checks the authorization token
+
+    if (authUser) {
+      const reportSelectQuery = `
+      SELECT t.id as id, u1.username AS senderusername, u2.username AS receiverusername, t.final_amount, t.amount, t.createdat, t.approvedat, t.status, t.details, t.type,t.rejectreason, t.hash, t.payoutmethod, t.payoutaccount1, t.payoutaccount2, t.payoutaccount3, t.seen
+      FROM transaction t
+      LEFT JOIN usersdata u1 ON t.senderid = u1.id
+      LEFT JOIN usersdata u2 ON t.receiverid = u2.id
+      WHERE t.type=? ORDER BY t.id DESC    
+              `;
+
+      const reportSelectParams = ['deposit'];
+      let reportSelectResult = await Qry(reportSelectQuery, reportSelectParams);
+
+      if (reportSelectResult.length < 1) {
+        reportSelectResult = [];
+      }
+      res.json({
+        status: "success",
+        data: reportSelectResult,
+      });
+    }
+  } catch (error) {
+    console.error("Error executing query:", error);
+    res.json({
+      status: "error",
+      message: "Server error occurred",
+    });
+  }
+});
+
+
+
+router.post("/levelbonussummary", async (req, res) => {
+  const postData = req.body;
+  const reportType = CleanHTMLData(CleanDBData(postData.type));
+  try {
+    const authUser = await adminAuthorization(req, res); // Assuming checkAuthorization function checks the authorization token
+
+    if (authUser) {
+      const reportSelectQuery = `
+      SELECT t.id as id, u1.username AS senderusername, u2.username AS receiverusername, t.final_amount, t.amount, t.createdat, t.approvedat, t.status, t.details, t.type,t.rejectreason, t.hash, t.payoutmethod, t.payoutaccount1, t.payoutaccount2, t.payoutaccount3, t.seen
+      FROM transaction t
+      LEFT JOIN usersdata u1 ON t.senderid = u1.id
+      LEFT JOIN usersdata u2 ON t.receiverid = u2.id
+      WHERE t.type=? ORDER BY t.id DESC    
+              `;
+
+      const reportSelectParams = ['Level Bonus'];
+      let reportSelectResult = await Qry(reportSelectQuery, reportSelectParams);
+
+      if (reportSelectResult.length < 1) {
+        reportSelectResult = [];
+      }
+      res.json({
+        status: "success",
+        data: reportSelectResult,
+      });
+    }
+  } catch (error) {
+    console.error("Error executing query:", error);
+    res.json({
+      status: "error",
+      message: "Server error occurred",
+    });
+  }
+});
+
 //Add New Package
 router.post("/addnewpackage", async (req, res) => {
   try {
@@ -1828,13 +1985,21 @@ router.post("/dashboard", async (req, res) => {
 
     if (authUser) {
       const selectInvestmentQuery =
-        "SELECT SUM(amount) as total, type FROM transaction WHERE status = 'approved' AND type = 'deposit'";
+        "SELECT SUM(amount) as total, type FROM transaction WHERE type = 'deposit'";
       const investmentData = await Qry(selectInvestmentQuery);
+      if (investmentData[0].total === null || investmentData[0].total === '') {
+        investmentData[0].total = 0
+      }
       dashboarddata.deposit = parseFloat(investmentData[0].total).toFixed(2);
 
       const selectPayoutQuery =
         "SELECT SUM(amount) as total, type FROM transaction WHERE status = 'approved' AND type = 'payout'";
       const payoutData = await Qry(selectPayoutQuery);
+
+      if (payoutData[0].total === null || payoutData[0].total === '') {
+        payoutData[0].total = 0
+      }
+
       dashboarddata.payout = parseFloat(payoutData[0].total).toFixed(2);
 
       const selectReferralBonusQuery =
@@ -1845,8 +2010,13 @@ router.post("/dashboard", async (req, res) => {
       ).toFixed(2);
 
       const selectRoiQuery =
-        "SELECT SUM(amount) as total, type FROM transaction WHERE status = 'approved' AND type = 'roi'";
+        "SELECT SUM(amount) as total FROM transaction WHERE type = 'roi'";
       const roiData = await Qry(selectRoiQuery);
+
+      if (roiData[0].total === null || roiData[0].total === '') {
+        roiData[0].total = 0
+      }
+
       dashboarddata.roi = parseFloat(roiData[0].total).toFixed(2);
 
       const selectUnilevelBonusQuery =
@@ -1876,6 +2046,29 @@ router.post("/dashboard", async (req, res) => {
   }
 });
 
+
+router.post("/roidata", async (req, res) => {
+  try {
+    const authUser = await checkAuthorization(req, res);
+    if (authUser) {
+      const selectRoiQuery =
+        `SELECT r.*, ud.username
+      FROM transaction r
+      left join usersdata ud on r.receiverid = ud.id
+      where type = 'roi'
+      ORDER BY r.id DESC`;
+      const roiData = await Qry(selectRoiQuery);
+
+      res.status(200).json({
+        status: "success",
+        data: roiData,
+      });
+    }
+  } catch (e) {
+    res.status(500).json({ status: "error", message: e.message });
+  }
+});
+
 //last 7 days transactions
 router.post("/lasttransactions", async (req, res) => {
   try {
@@ -1884,7 +2077,7 @@ router.post("/lasttransactions", async (req, res) => {
       const transactionSelect = await Qry(`
       SELECT * 
       FROM transaction
-      WHERE createdat > DATE(NOW() - INTERVAL 7 DAY) AND (senderid = '${authUser}' OR receiverid = '${authUser}')
+      WHERE createdat > DATE(NOW() - INTERVAL 7 DAY) AND (type = 'roi' or type = 'deposit')
       ORDER BY id DESC
     `);
 
@@ -1936,6 +2129,32 @@ router.post("/gethierarchy", async (req, res) => {
       });
     }
   } catch (e) {
+    res.status(500).json({ status: "error", message: e.message });
+  }
+});
+
+
+router.post("/payoutsummary", async (req, res) => {
+  try {
+    const authUser = await checkAuthorization(req, res);
+
+    if (authUser) {
+      const postData = req.body;
+      const status = CleanHTMLData(CleanDBData(postData.status));
+
+      const selectTransactionsQuery = `SELECT t.id as tid, t.*, u1.username as senderusername, u2.username as receiverusername FROM transaction t 
+    LEFT JOIN usersdata u1 ON t.senderid = u1.id 
+    LEFT JOIN usersdata u2 ON t.receiverid = u2.id 
+    WHERE t.type = ? and t.status = ?`;
+      const selectTransactionsResult = await Qry(selectTransactionsQuery, ['payout', status]);
+
+      res.status(200).json({
+        status: "success",
+        data: selectTransactionsResult,
+      });
+    }
+  } catch (e) {
+    console.log(e);
     res.status(500).json({ status: "error", message: e.message });
   }
 });
@@ -2044,50 +2263,57 @@ router.post("/payoutaction", async (req, res) => {
         const company = company_name;
 
 
-        const title = "Payout Approved";
-        const emailimg = emailImagesLink+'payout.png';
-        const heading = "Payout Approved";
-        const subheading = "The recent payout request is approved successfully";
-        const body = '<p style="text-align:left">Hello '+username+' <br> your payout request of $'+transactionData.amount+' successfully approved  and sent to your desired account</p>';
-        
+        // const title = "Payout Approved";
+        // const emailimg = emailImagesLink + 'payout.png';
+        // const heading = "Payout Approved";
+        // const subheading = "The recent payout request is approved successfully";
+        // const body = '<p style="text-align:left">Hello ' + username + ' <br> your payout request of $' + transactionData.amount + ' successfully approved  and sent to your desired account</p>';
 
-        const mailOptions = {
-          from: {
-            name: "Aura",
-            address: noreply_email,
-          },
-          to: {
-            name: username,
-            address: email,
-          },
-          subject: "Payout Approved on " + company_name,
-          html: emailTemplate(
-            title,
-            emailimg,
-            heading,
-            subheading,
-            body,
-            company_name
-          ),
-          text: body,
-        };
 
-        transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-            console.error("Error sending email:", err);
-            res.json({
-              status: "success",
-              message: "withdrawal approved but email not sent",
-              error: err,
-            });
-          } else {
-            res.json({
-              status: "success",
-              message:
-                "withdrawal approved successfully",
-            });
-          }
+        // const mailOptions = {
+        //   from: {
+        //     name: "Aura",
+        //     address: noreply_email,
+        //   },
+        //   to: {
+        //     name: username,
+        //     address: email,
+        //   },
+        //   subject: "Payout Approved on " + company_name,
+        //   html: emailTemplate(
+        //     title,
+        //     emailimg,
+        //     heading,
+        //     subheading,
+        //     body,
+        //     company_name
+        //   ),
+        //   text: body,
+        // };
+
+        // transporter.sendMail(mailOptions, (err, info) => {
+        //   if (err) {
+        //     console.error("Error sending email:", err);
+        //     res.json({
+        //       status: "success",
+        //       message: "withdrawal approved but email not sent",
+        //       error: err,
+        //     });
+        //   } else {
+        //     res.json({
+        //       status: "success",
+        //       message:
+        //         "withdrawal approved successfully",
+        //     });
+        //   }
+        // });
+
+        res.json({
+          status: "success",
+          message:
+            "withdrawal approved successfully",
         });
+
       }
 
       if (action === "rejected") {
@@ -2108,56 +2334,62 @@ router.post("/payoutaction", async (req, res) => {
         await Qry(updateUserQuery, [payoutAmount, userid]);
 
         // Email variables
-        const company = company_name;
-        const title = "Payout Rejected";
-        const emailimg = emailImagesLink+'payout.png';
-        const heading = "Payout Rejected";
-        const subheading = "The recent payout request is rejected";
-        const body = `<p style="text-align:left">Hello ${username} <br> your payout request of $${transactionData.amount} has been rejected
-        <br>
-        <b>Reason: ${reason}</b>
-        </p>
-    `
-        
+        //     const company = company_name;
+        //     const title = "Payout Rejected";
+        //     const emailimg = emailImagesLink + 'payout.png';
+        //     const heading = "Payout Rejected";
+        //     const subheading = "The recent payout request is rejected";
+        //     const body = `<p style="text-align:left">Hello ${username} <br> your payout request of $${transactionData.amount} has been rejected
+        //     <br>
+        //     <b>Reason: ${reason}</b>
+        //     </p>
+        // `
 
-        const mailOptions = {
-          from: {
-            name: "Aura",
-            address: noreply_email,
-          },
-          to: {
-            name: username,
-            address: email,
-          },
-          subject: "Payout Rejected on " + company_name,
-          html: emailTemplate(
-            title,
-            emailimg,
-            heading,
-            subheading,
-            body,
-            company_name
-          ),
-          text: body,
-        };
 
-        transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-            console.error("Error sending email:", err);
-            res.json({
-              status: "success",
-              message: "withdrawal rejected but email not sent",
-              error: err,
-            });
-          } else {
-            res.json({
-              status: "success",
-              message:
-                "withdrawal rejected successfully",
-            });
-          }
+        // const mailOptions = {
+        //   from: {
+        //     name: "Aura",
+        //     address: noreply_email,
+        //   },
+        //   to: {
+        //     name: username,
+        //     address: email,
+        //   },
+        //   subject: "Payout Rejected on " + company_name,
+        //   html: emailTemplate(
+        //     title,
+        //     emailimg,
+        //     heading,
+        //     subheading,
+        //     body,
+        //     company_name
+        //   ),
+        //   text: body,
+        // };
+
+        // transporter.sendMail(mailOptions, (err, info) => {
+        //   if (err) {
+        //     console.error("Error sending email:", err);
+        //     res.json({
+        //       status: "success",
+        //       message: "withdrawal rejected but email not sent",
+        //       error: err,
+        //     });
+        //   } else {
+        //     res.json({
+        //       status: "success",
+        //       message:
+        //         "withdrawal rejected successfully",
+        //     });
+        //   }
+        // });
+
+        res.json({
+          status: "success",
+          message:
+            "withdrawal rejected successfully",
         });
-      
+
       }
 
     }

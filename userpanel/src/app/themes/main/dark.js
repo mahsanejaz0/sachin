@@ -13,9 +13,9 @@ export const mainTheme = {
 
     palette: {
         primary: {
-            main: '#7352C7',
+            main: '#173754',
             light: '#A67FFB',
-            dark: '#5E3BB7',
+            dark: '#173754',
             contrastText: '#FFF'
         },
         secondary: {
@@ -55,7 +55,7 @@ export const mainTheme = {
         },
         divider : alpha('#FFFFFF', 0.1),
         background: {
-            paper: '#26324D',
+            paper: '#000435',
             default: '#19243B',
         },
         action: {

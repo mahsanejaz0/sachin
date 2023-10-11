@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://aura.threearrowstech.com/user/api';
-
+const API_BASE_URL = 'http://localhost:8000/user/api';
+// const API_BASE_URL = 'https://aura.threearrowstech.com/user/api';
 
 function updateAuthorizationHeader() {
   const token = localStorage.getItem('token');
@@ -149,6 +149,23 @@ export function lasttransactions(callback, errorCallback) {
 }
 
 
+export function dashBoardApi(callback, errorCallback) {
+  updateAuthorizationHeader()
+  axios.post(API_BASE_URL + '/dashboard', {
+  })
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+
 export function referralusers(callback, errorCallback) {
   updateAuthorizationHeader()
 
@@ -249,6 +266,54 @@ export function faqdata(callback, errorCallback) {
 export function transaction(params, callback, errorCallback) {
   updateAuthorizationHeader()
   axios.post(API_BASE_URL + '/transaction', params)
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+export function depositApi(params, callback, errorCallback) {
+  updateAuthorizationHeader()
+  axios.post(API_BASE_URL + '/deposit', params)
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+export function buyContractApi(params, callback, errorCallback) {
+  updateAuthorizationHeader()
+  axios.post(API_BASE_URL + '/buycontract', params)
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+export function getContractsApi(callback, errorCallback) {
+  updateAuthorizationHeader()
+
+  axios.post(API_BASE_URL + '/getcontracts', {
+
+  })
     .then(response => {
       if (callback) {
         callback(response);
@@ -390,12 +455,9 @@ export function getBinaryTreeData(userrandomcode, callback, errorCallback) {
     });
 }
 
-
-export function updateProfileData(formdata, callback, errorCallback) {
+export function updateProfileData(formdata,callback, errorCallback) {
   updateAuthorizationHeader()
-  axios.post(API_BASE_URL + '/updateprofiledata/formdata', {
-
-  })
+  axios.post(API_BASE_URL + '/updateprofiledata', formdata)
     .then(response => {
       if (callback) {
         callback(response);

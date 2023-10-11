@@ -6,7 +6,7 @@ const adminApiRoutes = require('./routes/adminroutes');
 
 const cors = require('cors');
 const path = require('path');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 const app = express()
 
 const corsOptions = {

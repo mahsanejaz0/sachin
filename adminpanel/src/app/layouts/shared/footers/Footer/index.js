@@ -15,7 +15,7 @@ const Footer = () => {
             bgcolor: 'background.paper',
         }}>
             <Div sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <Typography variant={"body1"} color={"text.primary"}>Copyright {companyName} Name © 2022</Typography>
+                <Typography variant={"body1"} color={"text.primary"}>Copyright {companyName} © 2023</Typography>
 
             </Div>
         </Div>

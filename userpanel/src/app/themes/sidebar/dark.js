@@ -5,9 +5,9 @@ export const sidebarTheme = {
     type: "light",
     palette: {
         primary: {
-            main: '#7352C7',
+            main: '#173754',
             light: '#A67FFB',
-            dark: '#5E3BB7',
+            dark: '#173754',
             contrastText: '#FFF'
         },
         secondary: {
@@ -51,18 +51,18 @@ export const sidebarTheme = {
                 hover: '#FFFFFF',
             },
             background: {
-                active: '#7352C7',
+                active: '#173754',
                 hover: alpha('#FFFFFF', .15),
             },
             tick: {
-                active: darken('#7352C7', .25),
+                active: darken('#173754', .25),
                 hover: alpha('#FFFFFF', .25),
             }
         },
         divider : '#DEE2E6',
         background: {
-            paper: '#26324D',
-            default: '#222D45',
+            paper: '#000435',
+            default: '#000435',
         },
         action: {
             active: '#475259',

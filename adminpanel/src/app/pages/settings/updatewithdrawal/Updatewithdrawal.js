@@ -14,9 +14,9 @@ const validationSchema = yup.object({
   payout_fee: yup
     .number()
     .required('Widthdrawal fee is required'),
-  min_payout: yup
-    .number()
-    .required('min payout is required')  
+  // min_payout: yup
+  //   .number()
+  //   .required('min payout is required')  
 });
 
 const Updatewithdrawal = () => {
@@ -50,8 +50,8 @@ const Updatewithdrawal = () => {
     const newData = {
       obj: {
         payout_fee: data.payout_fee,
-        min_payout: data.min_payout,
-        payout_flat_fee: data.payout_flat_fee,
+        // min_payout: data.min_payout,
+        // payout_flat_fee: data.payout_flat_fee,
       }
     };
     updatesettingdata(newData, (response) => {
@@ -100,8 +100,8 @@ const Updatewithdrawal = () => {
             validateOnChange={true}
             initialValues={{
               payout_fee: payoutdata[0].keyvalue,
-              min_payout: payoutdata[1].keyvalue,
-              payout_flat_fee: payoutdata[2].keyvalue,
+              // min_payout: payoutdata[1].keyvalue,
+              // payout_flat_fee: payoutdata[2].keyvalue,
             }
           }
             validationSchema={validationSchema}
@@ -122,23 +122,23 @@ const Updatewithdrawal = () => {
                   />
                 </Div>
 
-                <Div sx={{ mt: 1, mb: 3, pl: 2, pr: 2 }}>
+                {/* <Div sx={{ mt: 1, mb: 3, pl: 2, pr: 2 }}>
                   <JumboTextField
                     fullWidth
                     name="payout_flat_fee"
                     label="Flat Network Fee ($)"
                     type="text"
                   />
-                </Div>
+                </Div> */}
 
-                <Div sx={{ mt: 1, mb: 3, pl: 2, pr: 2 }}>
+                {/* <Div sx={{ mt: 1, mb: 3, pl: 2, pr: 2 }}>
                   <JumboTextField
                     fullWidth
                     name="min_payout"
                     label="Min Withdrawal ($)"
                     type="text"
                   />
-                </Div>
+                </Div> */}
 
 
 

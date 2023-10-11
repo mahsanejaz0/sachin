@@ -8,7 +8,7 @@ const ReferralList = ({referralusersdata,picturelink}) => {
         <List disablePadding>
             {
                 
-                referralusersdata.map((item, index) => (
+                referralusersdata?.map((item, index) => (
                     <AuthorItem author={item} key={index} picturelink={picturelink} />
                 ))
             }

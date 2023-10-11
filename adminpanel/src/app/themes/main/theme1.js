@@ -161,7 +161,7 @@ export const mainTheme = {
             styleOverrides: {
                 root: {
                     borderRadius: 12,
-                    boxShadow: `0 0.5rem 1.25rem ${alpha('#7352C7', .175)}`
+                    boxShadow: `0 0.5rem 1.25rem ${alpha('#173754', .175)}`
                 },
             },
         },

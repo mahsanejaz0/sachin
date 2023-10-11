@@ -1,17 +1,17 @@
 import React from 'react';
-import {Typography} from "@mui/material";
+import { Typography } from "@mui/material";
 import CardIconText from "@jumbo/shared/CardIconText";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 
-const ObjectCountRevenue = ({vertical,value,title, icon,color}) => {
-    const {t} = useTranslation();
+const ObjectCountRevenue = ({ vertical, value, title, icon, color }) => {
+    const { t } = useTranslation();
     return (
         <CardIconText
             icon={icon}
             title={<Typography variant={"p"} color={color}>{value}</Typography>}
             subTitle={<Typography variant={"p"}
-                                  color={"text.primary"}>{t('widgets.subheader.'+title)}</Typography>}
+                color={"text.primary"}>{title}</Typography>}
             color={color}
             disableHoverEffect={true}
             hideArrow={true}

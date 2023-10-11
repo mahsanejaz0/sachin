@@ -34,132 +34,131 @@ const menus = [
                 type: "nav-item",
                 icon: <GraphicEqIcon sx={{ fontSize: 20 }} />
             },
-        //     {
-        //         label: 'sidebar.menuItem.miniadmin',
-        //         type: "collapsible",
-        //         icon: <FeedIcon sx={{ fontSize: 20 }} />,
-        //         children: [
-        //             {
-        //                 uri: "/create-admin",
-        //                 label: 'sidebar.menuItem.createadmin',
-        //                 type: "nav-item",
-        //                 icon: <AdminPanelSettingsIcon sx={{ fontSize: 20 }} />
-        //             },
-        //             {
-        //                 uri: "/manage-admin",
-        //                 label: 'sidebar.menuItem.manageadmin',
-        //                 type: "nav-item",
-        //                 icon: <AdminPanelSettingsIcon sx={{ fontSize: 20 }} />
-        //             },
-        //         ]
-        // },
-        {
-            label: 'sidebar.menuItem.appUsers',
-            type: "collapsible",
-            icon: <GroupIcon sx={{ fontSize: 20 }} />,
-            children: [
-                {
-                    uri: "/active-users",
-                    label: 'sidebar.menuItem.activeusers',
-                    type: "nav-item",
-                },
-                {
-                    uri: "/inactive-users",
-                    label: 'sidebar.menuItem.inactiveusers',
-                    type: "nav-item",
-                },
-            ]
-    },
-    {
-        label: 'sidebar.menuItem.usersdeposit',
-        type: "collapsible",
-        icon: <CurrencyExchange sx={{fontSize: 20}}/>,
-        children: [
+            //     {
+            //         label: 'sidebar.menuItem.miniadmin',
+            //         type: "collapsible",
+            //         icon: <FeedIcon sx={{ fontSize: 20 }} />,
+            //         children: [
+            //             {
+            //                 uri: "/create-admin",
+            //                 label: 'sidebar.menuItem.createadmin',
+            //                 type: "nav-item",
+            //                 icon: <AdminPanelSettingsIcon sx={{ fontSize: 20 }} />
+            //             },
+            //             {
+            //                 uri: "/manage-admin",
+            //                 label: 'sidebar.menuItem.manageadmin',
+            //                 type: "nav-item",
+            //                 icon: <AdminPanelSettingsIcon sx={{ fontSize: 20 }} />
+            //             },
+            //         ]
+            // },
             {
-                uri: "/pending-deposits",
-                label: "sidebar.menuItem.pendingdeposit",
-                type: "nav-item"
+                label: 'sidebar.menuItem.appUsers',
+                type: "collapsible",
+                icon: <GroupIcon sx={{ fontSize: 20 }} />,
+                children: [
+                    {
+                        uri: "/active-users",
+                        label: 'sidebar.menuItem.activeusers',
+                        type: "nav-item",
+                    },
+                    {
+                        uri: "/inactive-users",
+                        label: 'sidebar.menuItem.inactiveusers',
+                        type: "nav-item",
+                    },
+                ]
             },
-            {
-                uri: "/approved-deposits",
-                label: "sidebar.menuItem.approveddeposit",
-                type: "nav-item"
-            },
-            {
-                uri: "/rejected-deposits",
-                label: "sidebar.menuItem.rejecteddeposit",
-                type: "nav-item"
-            },
+            // {
+            //     label: 'sidebar.menuItem.usersdeposit',
+            //     type: "collapsible",
+            //     icon: <CurrencyExchange sx={{fontSize: 20}}/>,
+            //     children: [
+            //         {
+            //             uri: "/pending-deposits",
+            //             label: "sidebar.menuItem.pendingdeposit",
+            //             type: "nav-item"
+            //         },
+            //         {
+            //             uri: "/approved-deposits",
+            //             label: "sidebar.menuItem.approveddeposit",
+            //             type: "nav-item"
+            //         },
+            //         {
+            //             uri: "/rejected-deposits",
+            //             label: "sidebar.menuItem.rejecteddeposit",
+            //             type: "nav-item"
+            //         },
 
-        ]
-    },
-    {
-        label: 'sidebar.menuItem.payout',
-        type: "collapsible",
-        icon: <PaidIcon sx={{ fontSize: 20 }} />,
-        children: [
+            //     ]
+            // },
+            // {
+            //     label: 'sidebar.menuItem.products',
+            //     type: "collapsible",
+            //     icon: <ShoppingCartOutlined sx={{ fontSize: 20 }} />,
+            //     children: [
+            //         {
+            //             uri: "/add-product",
+            //             label: 'sidebar.menuItem.addproducts',
+            //             type: "nav-item",
+            //             icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+            //         },
+            //         {
+            //             uri: "/manage-products",
+            //             label: 'sidebar.menuItem.manageproducts',
+            //             type: "nav-item",
+            //             icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+            //         },
+            //     ]
+            // },
             {
-                uri: "/pendingpayout",
-                label: 'sidebar.menuItem.pendingpayout',
-                type: "nav-item",
-                icon: <Diversity1Icon sx={{ fontSize: 20 }} />
-            },
-            {
-                uri: "/approvedpayout",
-                label: 'sidebar.menuItem.approvedpayout',
-                type: "nav-item",
-                icon: <Diversity1Icon sx={{ fontSize: 20 }} />
-            },
-        ]
-    },
-    // {
-    //     label: 'sidebar.menuItem.products',
-    //     type: "collapsible",
-    //     icon: <ShoppingCartOutlined sx={{ fontSize: 20 }} />,
-    //     children: [
-    //         {
-    //             uri: "/add-product",
-    //             label: 'sidebar.menuItem.addproducts',
-    //             type: "nav-item",
-    //             icon: <Diversity1Icon sx={{ fontSize: 20 }} />
-    //         },
-    //         {
-    //             uri: "/manage-products",
-    //             label: 'sidebar.menuItem.manageproducts',
-    //             type: "nav-item",
-    //             icon: <Diversity1Icon sx={{ fontSize: 20 }} />
-    //         },
-    //     ]
-    // },
-             {
                 label: 'sidebar.menuItem.reports',
                 type: "collapsible",
                 icon: <ReportIcon sx={{ fontSize: 20 }} />,
                 children: [
                     {
-                        uri: "/referral-bonus",
-                        label: 'sidebar.menuItem.referralbonus',
+                        uri: "/deposit-report",
+                        label: 'Deposit',
                         type: "nav-item",
                         icon: <Diversity1Icon sx={{ fontSize: 20 }} />
                     },
                     {
-                        uri: "/unilevel-bonus",
-                        label: 'sidebar.menuItem.unilevelbonus',
+                        uri: "/level-bonus-report",
+                        label: 'Level Bonus',
                         type: "nav-item",
                         icon: <Diversity1Icon sx={{ fontSize: 20 }} />
                     },
+                    {
+                        uri: "/roi",
+                        label: 'sidebar.menuItem.roireport',
+                        type: "nav-item",
+                        icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+                    },
+                    // {
+                    //     uri: "/referral-bonus",
+                    //     label: 'sidebar.menuItem.referralbonus',
+                    //     type: "nav-item",
+                    //     icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+                    // },
+                    // {
+                    //     uri: "/unilevel-bonus",
+                    //     label: 'sidebar.menuItem.unilevelbonus',
+                    //     type: "nav-item",
+                    //     icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+                    // },
                     // {
                     //     uri: "/payoutreport",
                     //     label: 'sidebar.menuItem.payoutreport',
                     //     type: "nav-item",
                     //     icon: <Diversity1Icon sx={{ fontSize: 20 }} />
                     // },
-                    {
-                        uri: "/rankreport",
-                        label: 'sidebar.menuItem.rankreport',
-                        type: "nav-item",
-                        icon: <Diversity1Icon sx={{ fontSize: 20 }} />
-                    },
+                    // {
+                    //     uri: "/rankreport",
+                    //     label: 'sidebar.menuItem.rankreport',
+                    //     type: "nav-item",
+                    //     icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+                    // },
                 ]
             },
             {
@@ -168,50 +167,62 @@ const menus = [
                 icon: <PaidIcon sx={{ fontSize: 20 }} />,
                 children: [
                     {
-                        uri: "/pendingpayout",
+                        uri: "/pending-payout",
                         label: 'sidebar.menuItem.pendingpayout',
                         type: "nav-item",
                         icon: <Diversity1Icon sx={{ fontSize: 20 }} />
                     },
                     {
-                        uri: "/approvedpayout",
+                        uri: "/approved-payout",
                         label: 'sidebar.menuItem.approvedpayout',
+                        type: "nav-item",
+                        icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+                    },
+                    {
+                        uri: "/rejected-payout",
+                        label: 'sidebar.menuItem.rejectpayout',
                         type: "nav-item",
                         icon: <Diversity1Icon sx={{ fontSize: 20 }} />
                     },
                 ]
             },
-            
+
             {
                 label: 'sidebar.menuItem.settings',
                 type: "collapsible",
                 icon: <SettingsIcon sx={{ fontSize: 20 }} />,
                 children: [
-                    {
-                        uri: "/update-admin-wallet",
-                        label: "sidebar.menuItem.depositwalletsetting",
-                        type: "nav-item"
-                    },
+                    // {
+                    //     uri: "/update-admin-wallet",
+                    //     label: "sidebar.menuItem.depositwalletsetting",
+                    //     type: "nav-item"
+                    // },
                     // {
                     //     uri: "/manage-packages",
                     //     label: "sidebar.menuItem.manage_pkg",
                     //     type: "nav-item"
                     // },
+                    // {
+                    //     uri: "/updateuserbalance",
+                    //     label: 'sidebar.menuItem.updateuserbalance',
+                    //     type: "nav-item",
+                    //     icon: <BalanceIcon sx={{ fontSize: 20 }} />
+                    // },
                     {
-                        uri: "/updateuserbalance",
-                        label: 'sidebar.menuItem.updateuserbalance',
+                        uri: "/manage-contracts",
+                        label: 'sidebar.menuItem.managecontract',
                         type: "nav-item",
-                        icon: <BalanceIcon sx={{ fontSize: 20 }} />
+                        icon: <AccountBalanceIcon sx={{ fontSize: 20 }} />
                     },
                     {
-                        uri: "/managetransactionpassword",
-                        label: 'sidebar.menuItem.managetransactionpassword',
+                        uri: "/manage-deposit-fee",
+                        label: 'sidebar.menuItem.managedepositfee',
                         type: "nav-item",
-                        icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+                        icon: <AccountBalanceIcon sx={{ fontSize: 20 }} />
                     },
                     {
-                        uri: "/updatewithdrawal",
-                        label: 'sidebar.menuItem.updatewithdrawal',
+                        uri: "/manage-roi",
+                        label: 'sidebar.menuItem.manageroi',
                         type: "nav-item",
                         icon: <AccountBalanceIcon sx={{ fontSize: 20 }} />
                     },
@@ -221,6 +232,24 @@ const menus = [
                         type: "nav-item",
                         icon: <MonetizationOnIcon sx={{ fontSize: 20 }} />
                     },
+                    {
+                        uri: "/updatewithdrawal",
+                        label: 'sidebar.menuItem.updatewithdrawal',
+                        type: "nav-item",
+                        icon: <AccountBalanceIcon sx={{ fontSize: 20 }} />
+                    },
+                    {
+                        uri: "/updateloginpassword",
+                        label: 'sidebar.menuItem.updatepassword',
+                        type: "nav-item",
+                        icon: <PasswordIcon sx={{ fontSize: 20 }} />
+                    },
+                    // {
+                    //     uri: "/managetransactionpassword",
+                    //     label: 'sidebar.menuItem.managetransactionpassword',
+                    //     type: "nav-item",
+                    //     icon: <Diversity1Icon sx={{ fontSize: 20 }} />
+                    // },
                     // {
                     //     uri: "/managezoom",
                     //     label: 'sidebar.menuItem.managezoom',
@@ -245,12 +274,12 @@ const menus = [
                     //     type: "nav-item",
                     //     icon: <PasswordIcon sx={{ fontSize: 20 }} />
                     // },
-                    {
-                        uri: "/updateuserpassword",
-                        label: 'sidebar.menuItem.updateuserpassword',
-                        type: "nav-item",
-                        icon: <PasswordIcon sx={{ fontSize: 20 }} />
-                    },
+                    // {
+                    //     uri: "/updateuserpassword",
+                    //     label: 'sidebar.menuItem.updateuserpassword',
+                    //     type: "nav-item",
+                    //     icon: <PasswordIcon sx={{ fontSize: 20 }} />
+                    // },
 
                 ]
             },
@@ -276,8 +305,8 @@ const menus = [
             //         },
             //     ]
             // },
-            
-           
+
+
             {
                 label: 'sidebar.menuItem.news',
                 type: "collapsible",
@@ -298,49 +327,12 @@ const menus = [
                 ]
 
             },
-
-            {
-                label: 'sidebar.menuItem.payoutdetail',
-                type: "collapsible",
-                icon: <DetailsIcon sx={{ fontSize: 20 }} />,
-                children: [
-                    {
-                        uri: "/pending-payout",
-                        label: 'sidebar.menuItem.payoutdetailpending',
-                        type: "nav-item",
-                    },
-                    {
-                        uri: "/approved-payout",
-                        label: 'sidebar.menuItem.payoutdetailapproved',
-                        type: "nav-item",
-                    },
-                    {
-                        uri: "/rejected-payout",
-                        label: 'sidebar.menuItem.payoutdetailrejected',
-                        type: "nav-item",
-                    },
-                ]
-            },
-
-            
-                    {
-                        uri: "/profile",
-                        label: 'sidebar.menuItem.updatepassword',
-                        type: "nav-item",
-                        icon: <PasswordIcon sx={{ fontSize: 20 }} />
-                    },
-                    
-
-
-
             {
                 uri: "/logout",
                 label: 'sidebar.menuItem.logout',
                 type: "nav-item",
                 icon: <LogoutIcon sx={{ fontSize: 20 }} />
             },
-
-
         ]
     },
 

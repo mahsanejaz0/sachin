@@ -48,7 +48,7 @@ const Header = () => {
            
             <Stack direction="row" alignItems="center" spacing={1.25} sx={{ml: "auto"}}>
 
-                <p>Your Referrer: <b>{userData.sponsornuserame}</b></p>
+                {/* <p>Your Referrer: <b>{userData.sponsornuserame}</b></p> */}
                 {/* <MessagesDropdown/> */}
                 {/* <NotificationsDropdown/> */}
                 <AuthUserDropdown/>

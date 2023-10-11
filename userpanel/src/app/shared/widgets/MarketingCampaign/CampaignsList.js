@@ -12,7 +12,7 @@ const CampaignsList = ({lasttransactionsdata}) => {
                 
                 <>
                 {
-                     lasttransactionsdata.map((data,index)=>(
+                     lasttransactionsdata?.map((data,index)=>(
                         <CampaignItem item={data} key={index}/>
                      ))
                 }

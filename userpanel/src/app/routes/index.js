@@ -25,6 +25,7 @@ import PackageSummary from "app/pages/reports/package/PackageSummary";
 import UnilevelTreeView from "app/pages/treeview/UnilevelTreeView";
 import PayoutReports from "app/pages/reports/payout/PayoutReports";
 import News from "app/news/news";
+import BuyContract from "app/pages/buycontract/BuyContract";
 /**
  routes which you want to make accessible to both authenticated and anonymous users
  **/
@@ -53,6 +54,10 @@ const routesForAuthenticatedOnly = [
     {
         path: "/deposit",
         element: <Page component={Investment} />
+    },
+    {
+        path: "/buy-contract",
+        element: <Page component={BuyContract} />
     },
     {
         path: "/package-summary",

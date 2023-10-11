@@ -74,7 +74,7 @@ const Active = () => {
     field: "mobile",
     headerName: "Mobile",  
     dataGeneratorUniquenessEnabled: true,
-    width: 100,
+    width: 130,
     editable: true,
     groupable: false,
     aggregable: false,
@@ -84,50 +84,50 @@ const Active = () => {
     field: "current_balance",
     headerName: "Wallet Balance",  
     dataGeneratorUniquenessEnabled: true,
-    width: 80,
+    width: 150,
     editable: true,
     groupable: false,
     aggregable: false,
   },
   
-  {
-    field: "actions",
-    headerName: "Actions",
-    width: 120,
-    editable: true,
-    groupable: false,
-    aggregable: false,
-    renderCell: (params) => {
-      const randomcode = params?.row?.randomcode;
-      const username = params?.row?.username;
-      const tree = '/treeview/' + randomcode;
+  // {
+  //   field: "actions",
+  //   headerName: "Actions",
+  //   width: 120,
+  //   editable: true,
+  //   groupable: false,
+  //   aggregable: false,
+  //   renderCell: (params) => {
+  //     const randomcode = params?.row?.randomcode;
+  //     const username = params?.row?.username;
+  //     const tree = '/treeview/' + randomcode;
     
-      const isLoading = loadingStates[params.row.userid] || false;
+  //     const isLoading = loadingStates[params.row.userid] || false;
     
-      return (
-        <>
-          <Tooltip title="View Tree">
-            <Link to={tree}>
-              <ReduceCapacityIcon color="warning" sx={{ fontSize: 20 }} />
-            </Link>
-          </Tooltip>
-          {/* <Tooltip title={"Login to " + username + " account"}>
-            <IconButton
-              onClick={() => handleCreateUserSession(params.row.userid)}
-              disabled={isLoading} // Disable the button while loading is true
-            >
-              {isLoading ? (
-                <CircularProgress color='error' size={20} /> // Show the loading progress
-              ) : (
-                <Login color="error" />
-              )}
-            </IconButton>
-          </Tooltip> */}
-        </>
-      );
-    },
+  //     return (
+  //       <>
+  //         <Tooltip title="View Tree">
+  //           <Link to={tree}>
+  //             <ReduceCapacityIcon color="warning" sx={{ fontSize: 20 }} />
+  //           </Link>
+  //         </Tooltip>
+  //         {/* <Tooltip title={"Login to " + username + " account"}>
+  //           <IconButton
+  //             onClick={() => handleCreateUserSession(params.row.userid)}
+  //             disabled={isLoading} // Disable the button while loading is true
+  //           >
+  //             {isLoading ? (
+  //               <CircularProgress color='error' size={20} /> // Show the loading progress
+  //             ) : (
+  //               <Login color="error" />
+  //             )}
+  //           </IconButton>
+  //         </Tooltip> */}
+  //       </>
+  //     );
+  //   },
     
-  },
+  // },
   
   
   ]

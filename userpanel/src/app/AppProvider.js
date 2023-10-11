@@ -70,7 +70,7 @@ const AppProvider = ({children}) => {
     }
 
 
-    const companyName = 'Aura Coinex'
+    const companyName = 'Bank of Tether Admin'
 
     const contextValue = React.useMemo(() => ({
         ...app,

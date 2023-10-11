@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://aura.threearrowstech.com/admin/api";
+const API_BASE_URL = "http://localhost:8000/admin/api";
+// const API_BASE_URL = "https://aura.threearrowstech.com/admin/api";
 
 function updateAuthorizationHeader() {
   const token = localStorage.getItem("token");
@@ -33,6 +34,24 @@ export function getsettingsdata(params, callback, errorCallback) {
 
   axios
     .post(`${API_BASE_URL}${"/getsettingsdata"}`, params)
+    .then((response) => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch((error) => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+
+export function getcontractsdata(params, callback, errorCallback) {
+  updateAuthorizationHeader();
+
+  axios
+    .post(`${API_BASE_URL}${"/getcontractsdata"}`, params)
     .then((response) => {
       if (callback) {
         callback(response);
@@ -131,6 +150,22 @@ export function updatesettingdata(data, callback, errorCallback) {
     });
 }
 
+export function updatecontractsdata(data, callback, errorCallback) {
+  updateAuthorizationHeader();
+  axios
+    .post(`${API_BASE_URL}${"/updatecontractsdata"}`, data)
+    .then((response) => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch((error) => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
 export function dashboard(callback, errorCallback) {
   updateAuthorizationHeader();
 
@@ -170,6 +205,41 @@ export function donationsummary(callback, errorCallback) {
 
   axios
     .post(`${API_BASE_URL}${"/report"}`, "")
+    .then((response) => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch((error) => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+
+export function depositSummaryApi(callback, errorCallback) {
+  updateAuthorizationHeader();
+
+  axios
+    .post(`${API_BASE_URL}${"/depositsummary"}`, "")
+    .then((response) => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch((error) => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+export function levelBonusSummaryApi(callback, errorCallback) {
+  updateAuthorizationHeader();
+
+  axios
+    .post(`${API_BASE_URL}${"/levelbonussummary"}`, "")
     .then((response) => {
       if (callback) {
         callback(response);
@@ -381,6 +451,25 @@ export function createadmin(params, callback, errorCallback) {
 
 //Get Admins
 
+
+
+export function getPayoutApi(params, callback, errorCallback) {
+  updateAuthorizationHeader();
+
+  axios
+    .post(API_BASE_URL + "/payoutreport", params)
+    .then((response) => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch((error) => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
 export function getadmins(callback, errorCallback) {
   updateAuthorizationHeader();
 
@@ -404,6 +493,24 @@ export function getuserslist(callback, errorCallback) {
 
   axios
     .post(`${API_BASE_URL}${"/getuserslist"}`, "")
+    .then((response) => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch((error) => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+
+export function getuserssetting(callback, errorCallback) {
+  updateAuthorizationHeader();
+
+  axios
+    .post(`${API_BASE_URL}${"/getusers"}`, "")
     .then((response) => {
       if (callback) {
         callback(response);
@@ -870,7 +977,7 @@ export function roidata(callback, errorCallback) {
   updateAuthorizationHeader();
 
   axios
-    .post(`${API_BASE_URL}${"/user/roidata"}`, "")
+    .post(`${API_BASE_URL}${"/roidata"}`, "")
     .then((response) => {
       if (callback) {
         callback(response);
@@ -1348,6 +1455,22 @@ export  function rejectpayment(params,callback, errorCallback) {
         'AUTHORIZATION' : 'Bearer '+localStorage.getItem('token')
       }
   })
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+
+export  function payoutSummaryApi(params, callback, errorCallback) {
+  updateAuthorizationHeader();
+  axios.post(API_BASE_URL+'/payoutsummary', params)
     .then(response => {
       if (callback) {
         callback(response);

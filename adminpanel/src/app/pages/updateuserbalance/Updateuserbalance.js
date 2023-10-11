@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import JumboCardQuick from "@jumbo/components/JumboCardQuick";
 import { Box, CircularProgress, Grid, List, MenuItem } from "@mui/material";
 import { useState } from 'react';
-import { UpdateCurrentBalance, getuserslist } from 'backendServices/ApiCalls';
+import { UpdateCurrentBalance, getuserssetting } from 'backendServices/ApiCalls';
 import SweetAlert from 'app/pages/components/mui/Alerts/SweetAlert';
 import * as yup from "yup";
 import { Form, Formik } from "formik";
@@ -34,7 +34,9 @@ const Updateuserbalance = () => {
   })
 
   const userslist = () => {
-    getuserslist(response => {
+    getuserssetting(response => {
+      console.log(response)
+      console.log('ffffffffffffffff')
       setUserList(response?.data?.userdata);
       setIsLoading(false);
     })

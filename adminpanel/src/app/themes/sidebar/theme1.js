@@ -4,9 +4,9 @@ export const sidebarTheme = {
     type: "dark",
     palette: {
         primary: {
-            main: '#7352C7',
+            main: '#173754',
             light: '#A67FFB',
-            dark: '#5E3BB7',
+            dark: '#173754',
             contrastText: '#FFF'
         },
         secondary: {

@@ -9,9 +9,9 @@ const ObjectCountRevenue = ({vertical,value,title, icon,color}) => {
     return (
         <CardIconText
             icon={icon}
-            title={<Typography variant={"p"} color={color}>{value}</Typography>}
+            title={<Typography variant={"p"} color={color}>${value}</Typography>}
             subTitle={<Typography variant={"p"}
-                                  color={"text.primary"}>{t('widgets.subheader.'+title)}</Typography>}
+                                  color={"text.primary"}>{title}</Typography>}
             color={color}
             disableHoverEffect={true}
             hideArrow={true}

@@ -4,9 +4,9 @@ export const sidebarTheme = {
     type: "light",
     palette: {
         primary: {
-            main: '#7352C7',
+            main: '#173754',
             light: '#A67FFB',
-            dark: '#5E3BB7',
+            dark: '#173754',
             contrastText: '#FFF'
         },
         secondary: {
@@ -46,15 +46,15 @@ export const sidebarTheme = {
         },
         nav: {
             action: {
-                active: '#7352C7',
-                hover: '#7352C7',
+                active: '#173754',
+                hover: '#173754',
             },
             background: {
-                active: alpha('#7352C7', .15),
+                active: alpha('#173754', .15),
                 hover: "#E9ECEF"
             },
             tick: {
-                active: '#7352C7',
+                active: '#173754',
                 hover: "#ADB5BD"
             }
         },

@@ -1,9 +1,9 @@
 export const footerTheme = {
     palette: {
         primary: {
-            main: '#7352C7',
+            main: '#173754',
             light: '#A67FFB',
-            dark: '#5E3BB7',
+            dark: '#173754',
             contrastText: '#FFF'
         },
         secondary: {
@@ -41,9 +41,9 @@ export const footerTheme = {
             secondary: '#FFF',
             disabled: '#A2B2C3',
         },
-        divider : '#222D45',
+        divider : '#000435',
         background: {
-            paper: '#222D45',
+            paper: '#000435',
             default: '#F5F7FA',
         },
         action: {

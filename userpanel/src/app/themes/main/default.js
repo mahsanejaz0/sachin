@@ -13,9 +13,9 @@ export const mainTheme = {
 
     palette: {
         primary: {
-            main: '#7352C7',
+            main: '#173754',
             light: '#A67FFB',
-            dark: '#5E3BB7',
+            dark: '#173754',
             contrastText: '#FFF'
         },
         secondary: {
@@ -160,7 +160,7 @@ export const mainTheme = {
             styleOverrides: {
                 root: {
                     borderRadius: 12,
-                    boxShadow: `0 0.5rem 1.25rem ${alpha('#7352C7', .175)}`
+                    boxShadow: `0 0.5rem 1.25rem ${alpha('#173754', .175)}`
                 },
             },
         },

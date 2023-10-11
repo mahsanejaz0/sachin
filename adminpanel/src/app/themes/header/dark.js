@@ -7,7 +7,7 @@ export const headerTheme = {
             styleOverrides: {
                 root: {
                     color: '#FFFFFF',
-                    background: '#222D45'
+                    background: '#000435'
                 }
             }
         },
@@ -32,9 +32,9 @@ export const headerTheme = {
     },
     palette: {
         primary: {
-            main: '#7352C7',
+            main: '#173754',
             light: '#A67FFB',
-            dark: '#5E3BB7',
+            dark: '#173754',
             contrastText: '#FFF'
         },
         secondary: {
@@ -74,7 +74,7 @@ export const headerTheme = {
         },
         divider : alpha('#FFFFFF', 0.1),
         background: {
-            paper: '#26324D',
+            paper: '#000435',
             default: '#3C475F',
         },
         action: {

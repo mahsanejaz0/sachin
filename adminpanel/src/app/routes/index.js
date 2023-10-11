@@ -53,6 +53,10 @@ import UnilevelTreeView from "../pages/treeview/UnilevelTreeView";
 import PendingPayout from "app/pages/reports/payout/PendingPayout";
 import ApprovedPayout from "app/pages/reports/payout/ApprovedPayout";
 import RejectedPayout from "app/pages/reports/payout/RejectedPayout";
+import ManageROI from "app/pages/settings/manageroi";
+import ManageDepositFee from "app/pages/settings/managedepositfee/ManageDepositFee";
+import ManageContracts from "app/pages/settings/managecontracts/ManageContracts";
+import LevelBonusReport from "app/pages/reports/levelbonus/LevelBonusReport";
 /**
  routes which you want to make accessible to both authenticated and anonymous users
  **/
@@ -78,23 +82,23 @@ const routesForAuthenticatedOnly = [
     {
         path: "/create-admin",
         element: <Page component={CreateAdmin} />
-    }, 
+    },
     {
         path: "/manage-admin",
         element: <Page component={ManageAdmin} />
-    },  
+    },
     {
         path: "/add-product",
         element: <Page component={AddProduct} />
-    },  
+    },
     {
         path: "/manage-products",
         element: <Page component={Manageproduct} />
-    },  
+    },
     {
         path: "/active-users",
         element: <Page component={Active} />
-    },  
+    },
     {
         path: "/inactive-users",
         element: <Page component={Inactive} />
@@ -102,7 +106,7 @@ const routesForAuthenticatedOnly = [
     {
         path: "/change-sponsor",
         element: <Page component={UpdateSponsor} />
-    },    
+    },
     {
         path: "/profile",
         element: <Page component={UserProfile} />
@@ -126,18 +130,18 @@ const routesForAuthenticatedOnly = [
     {
         path: "/approved-deposits",
         element: <Page component={ApprovedDeposit} />
-    }, 
+    },
     {
         path: "/rejected-deposits",
         element: <Page component={RejectedDeposit} />
-    },    
+    },
     {
         path: "/pending-deposits",
         element: <Page component={PendingDeposit} />
     },
     {
         path: "/update-admin-wallet",
-        element: <Page component={DepositWallet}  />
+        element: <Page component={DepositWallet} />
     },
     {
         path: "/pending-manual-payments",
@@ -153,7 +157,7 @@ const routesForAuthenticatedOnly = [
         element: <Page component={RejectedManualPayments} />
     },
     {
-        path: "/roi-summary",
+        path: "/roi",
         element: <Page component={RoiReport} />
     },
     {
@@ -170,135 +174,150 @@ const routesForAuthenticatedOnly = [
     },
     {
         path: "/test",
-        element: <Page component={Test}  />
+        element: <Page component={Test} />
     },
     {
         path: "/updatewithdrawal",
-        element: <Page component={Updatewithdrawal}  />
+        element: <Page component={Updatewithdrawal} />
     },
     {
         path: "/kycpending",
-        element: <Page component={KYCPending}  />
+        element: <Page component={KYCPending} />
     },
     {
         path: "/approvedkyc",
-        element: <Page component={Approvedkyc}  />
+        element: <Page component={Approvedkyc} />
     },
     {
         path: "/rejectedkyc",
-        element: <Page component={Rejected}  />
+        element: <Page component={Rejected} />
     },
     {
         path: "/pending-payout",
-        element: <Page component={PendingPayout}  />
+        element: <Page component={PendingPayout} />
     },
     {
         path: "/approved-payout",
-        element: <Page component={ApprovedPayout}  />
+        element: <Page component={ApprovedPayout} />
     },
     {
         path: "/rejected-payout",
-        element: <Page component={RejectedPayout}  />
+        element: <Page component={RejectedPayout} />
     },
     {
         path: "/subscriptionreport",
-        element: <Page component={Subscriptionreport}  />
+        element: <Page component={Subscriptionreport} />
     },
     {
         path: "/affiliatereport",
-        element: <Page component={Affiliatereport}  />
+        element: <Page component={Affiliatereport} />
     },
 
     {
         path: "/updateloginpassword",
-        element: <Page component={Updateloginpassword}  />
+        element: <Page component={Updateloginpassword} />
     },
     {
         path: "/updatetransactionpassword",
-        element: <Page component={Updatetransactionpassword}  />
+        element: <Page component={Updatetransactionpassword} />
     },
     {
         path: "/updateuserpassword",
-        element: <Page component={Updateuserpassword}  />
+        element: <Page component={Updateuserpassword} />
     },
 
     {
         path: "/userlisttable",
-        element: <Page component={Userlisttable}  />
+        element: <Page component={Userlisttable} />
     },
     {
         path: "/rankreport",
-        element: <Page component={Rankreport}  />
+        element: <Page component={Rankreport} />
     },
     {
         path: "/managezoom",
-        element: <Page component={Managezoom}  />
+        element: <Page component={Managezoom} />
     },
     {
         path: "/managecommission",
-        element: <Page component={Managecommission}  />
+        element: <Page component={Managecommission} />
     },
     {
         path: "/manage-packages",
-        element: <Page component={Packages}  />
+        element: <Page component={Packages} />
     },
     {
         path: "/manageunilevelbonus",
-        element: <Page component={Manageunilevelbonus}  />
+        element: <Page component={Manageunilevelbonus} />
     },
     {
         path: "/managetransactionpassword",
-        element: <Page component={Managetransactionpassword}  />
+        element: <Page component={Managetransactionpassword} />
     },
     {
         path: "/addnews",
-        element: <Page component={Addnews}  />
+        element: <Page component={Addnews} />
     },
     {
         path: "/managenews",
-        element: <Page component={Managenews}  />
+        element: <Page component={Managenews} />
     },
     {
         path: "/updateuserbalance",
-        element: <Page component={Updateuserbalance}  />
+        element: <Page component={Updateuserbalance} />
     },
     {
         path: "/listofAlluser",
-        element: <Page component={ListofAlluser}  />
+        element: <Page component={ListofAlluser} />
     },
     {
         path: "/updateuserlist",
-        element: <Page component={Updateuserlist}  />
+        element: <Page component={Updateuserlist} />
     },
-    
+    {
+        path: "/manage-roi",
+        element: <Page component={ManageROI} />
+    },
+    {
+        path: "/manage-deposit-fee",
+        element: <Page component={ManageDepositFee} />
+    },
+    {
+        path: "/manage-contracts",
+        element: <Page component={ManageContracts} />
+    },
+    {
+        path: "/level-bonus-report",
+        element: <Page component={LevelBonusReport} />
+    },
     {
         path: "/404",
-        element: <Page component={Error404}  />
+        element: <Page component={Error404} />
     },
 ];
 
 /**
  routes only accessible when user is anonymous
  **/
- const routesForNotAuthenticatedOnly = [
+const routesForNotAuthenticatedOnly = [
     {
         path: "/login",
-        element: <Page component={Login}  />
+        element: <Page component={Login} />
     },
     {
         path: "/login/:token/:email",
-        element: <Page component={Login}  />
+        element: <Page component={Login} />
     },
-    
+
     {
         path: "/forget-password",
-        element: <Page component={ForgotPassword}  />
+        element: <Page component={ForgotPassword} />
     },
     {
         path: "/reset-password/:token/:email",
-        element: <Page component={ResetPassword}  />
+        element: <Page component={ResetPassword} />
     },
- ];
+];
 
 
 const routes = [
@@ -307,4 +326,4 @@ const routes = [
     ...routesForNotAuthenticatedOnly,
 ];
 
-export {routes as default, routesForPublic, routesForNotAuthenticatedOnly, routesForAuthenticatedOnly};
+export { routes as default, routesForPublic, routesForNotAuthenticatedOnly, routesForAuthenticatedOnly };

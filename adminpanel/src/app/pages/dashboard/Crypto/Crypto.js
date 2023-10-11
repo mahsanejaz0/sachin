@@ -77,27 +77,24 @@ const Crypto = () => {
 
     return (
         <Grid container spacing={3.75}>
-             <Grid item xs={12} sm={6} lg={3}>
-                <ObjectCountRevenue value={dashboarddata?.deposit || 0} title='tdeposit' color="secondary.main"  icon={<AccountBalanceWalletRoundedIcon fontSize='large'/>}  vertical={true}/>
+             <Grid item xs={12} sm={6} lg={4}>
+                <ObjectCountRevenue value={dashboarddata?.deposit || 0} title='Total Deposit' color="secondary.main"  icon={<AccountBalanceWalletRoundedIcon fontSize='large'/>}  vertical={true}/>
             </Grid>
-             <Grid item xs={12} sm={6} lg={3}>
-                <ObjectCountRevenue value={dashboarddata?.payout || 0} title='tpayout' color="success.main"  icon={<RedeemIcon fontSize='large'/>}  vertical={true}/>
+             <Grid item xs={12} sm={6} lg={4}>
+                <ObjectCountRevenue value={dashboarddata?.payout || 0} title='Total Payout' color="success.main"  icon={<RedeemIcon fontSize='large'/>}  vertical={true}/>
             </Grid>
-            <Grid item xs={12} sm={6} lg={3}>
-                <ObjectCountRevenue value={dashboarddata?.referralbonus || 0} title='referralbonus' color="primary.main" icon={<AccountBalanceWalletRoundedIcon fontSize='large'/>} vertical={true}/>
+            <Grid item xs={12} sm={6} lg={4}>
+                <ObjectCountRevenue value={dashboarddata?.referralbonus || 0} title='Total ROI' color="primary.main" icon={<AccountBalanceWalletRoundedIcon fontSize='large'/>} vertical={true}/>
             </Grid>
             
-            <Grid item xs={12} sm={6} lg={3}>
-                <ObjectCountRevenue value={dashboarddata?.unilevelbonus || 0} title='unilevelbonus' color="secondary.main"  icon={<GroupAddIcon fontSize='large'/>}  vertical={true}/>
+            <Grid item xs={12} sm={6} lg={4}>
+                <ObjectCountRevenue value={dashboarddata?.activeusers || 0} title='Active Users' color="success.main"  icon={<VerifiedUser fontSize='large'/>}  vertical={true}/>
             </Grid> 
             <Grid item xs={12} sm={6} lg={4}>
-                <ObjectCountRevenue value={dashboarddata?.activeusers || 0} title='activeusers' color="success.main"  icon={<VerifiedUser fontSize='large'/>}  vertical={true}/>
+                <ObjectCountRevenue value={dashboarddata?.inactiveusers || 0} title='Inactive Users' color="warning.main"  icon={<GroupAddIcon fontSize='large'/>}  vertical={true}/>
             </Grid> 
             <Grid item xs={12} sm={6} lg={4}>
-                <ObjectCountRevenue value={dashboarddata?.inactiveusers || 0} title='inactiveusers' color="warning.main"  icon={<GroupAddIcon fontSize='large'/>}  vertical={true}/>
-            </Grid> 
-            <Grid item xs={12} sm={6} lg={4}>
-                <ObjectCountRevenue value={totalUsers} title='tusers' color="info.main"  icon={<Group fontSize='large'/>}  vertical={true}/>
+                <ObjectCountRevenue value={totalUsers} title='Total Users' color="info.main"  icon={<Group fontSize='large'/>}  vertical={true}/>
             </Grid> 
             <Grid item xs={12} lg={12}>
                 <MarketingCampaign lasttransactionsdata={lasttransactionsdata}/>

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import JumboDemoCard from '@jumbo/components/JumboDemoCard/JumboDemoCard';
-import { getpayoutlist, postRequest } from 'backendServices/ApiCalls';
-import { Chip,IconButton, Tooltip, Grid } from '@mui/material';
+import { payoutSummaryApi, getpayoutlist, postRequest } from 'backendServices/ApiCalls';
+import { Chip, IconButton, Tooltip, Grid } from '@mui/material';
 import { FileCopy as FileCopyIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 
-const VISIBLE_FIELDS = ['sr','receiverusername', 'amount', 'payoutaccount1', 'payoutaccount2','rejectreason', 'createdat'];
+const VISIBLE_FIELDS = ['sr', 'receiverusername', 'amount', 'final_amount', 'payoutaccount1', 'payoutaccount2', 'rejectreason', 'createdat'];
 
 const RejectedPayout = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -15,20 +15,15 @@ const RejectedPayout = () => {
 
   let params = {
     status: 'rejected',
-    type:'payout',
-    usertype:'receiver'
   };
 
 
   const UsersData = () => {
-    postRequest(
-      '/selecttransactions',
-      params,
-      (response) => {
-        if (response?.data?.status === 'success') {
-          setUsersData(response?.data?.data);
-        }
-      },
+    payoutSummaryApi(params, (response) => {
+      if (response?.data?.status === 'success') {
+        setUsersData(response?.data?.data);
+      }
+    },
       (error) => {
         console.log(error?.response?.data);
       }
@@ -121,13 +116,20 @@ const RejectedPayout = () => {
                   headerName: 'Amount',
                   width: 150,
                 };
-              }else if (field === 'createdat') {
+              }
+              else if (field === 'final_amount') {
+                return {
+                  field,
+                  headerName: 'Final Amount',
+                  width: 150,
+                };
+              } else if (field === 'createdat') {
                 return {
                   field,
                   headerName: 'Date',
                   width: 150,
                 };
-              }else if (field === 'rejectreason') {
+              } else if (field === 'rejectreason') {
                 return {
                   field,
                   headerName: 'Reason',
@@ -148,7 +150,7 @@ const RejectedPayout = () => {
                   width: 150,
                   renderCell: (params) => {
                     const isCopied = copiedRows.includes(params.row.id);
-                    
+
                     const handleCopyClick = () => {
                       navigator.clipboard.writeText(params.value)
                         .then(() => {
@@ -158,7 +160,7 @@ const RejectedPayout = () => {
                           console.error('Copy failed:', error);
                         });
                     };
-          
+
                     return (
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         {isCopied ? (
@@ -186,7 +188,7 @@ const RejectedPayout = () => {
                 width: 150,
               };;
             }),
-            
+
           ]}
           slots={{ toolbar: GridToolbar }}
           sx={gridDesign}

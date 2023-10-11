@@ -32,7 +32,7 @@ const BitcoinPrice = () => {
             bgColor={"#6f42c1"}
             headerSx={{pb: 0}}
         >
-            <ChartLastMonthSales/>
+            {/* <ChartLastMonthSales/> */}
         </JumboCardQuick>
     );
 };
