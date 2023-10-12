@@ -23,8 +23,8 @@ const CPKEY = process.env.CPKEY;
 const CPSECRET = process.env.CPSECRET;
 const CPCURRENCY = process.env.CPCURRENCY;
 
-const backoffice_link = "https://aura.threearrowstech.com/";
-const weblink = "https://dashboard.skytsevni.net/";
+const backoffice_link = "http://localhost:8000/";
+const weblink = "https://app.mytether.co/";
 const emailImagesLink =
   "https://threearrowstech.com/projects/quantum/public/images/email-images/";
 const noreply_email = "mails@skytsevni.net";
@@ -251,7 +251,7 @@ router.post("/login", async (req, res) => {
     if (!passwordMatch) {
       res.json({
         status: "error",
-        message: "Invalid email or password.",
+        message: "Invalid username or password.",
       });
       return;
     } else if (user.emailstatus === "unverified") {
@@ -1283,19 +1283,29 @@ router.post("/deposit", async (req, res) => {
         });
         return;
       }
-      const CoinpaymentsCreateTransactionOpts = {
-        currency1: 'USD',
-        currency2: CPCURRENCY,
-        amount: amount,
-        buyer_email: userData.email,
-        ipn_url: 'https://nodeapp.mytether.co/user/api/ipn',
+      let paymentAddress,CaInfo
+      const selectCryptoAddress = await Qry(`select * from crypto_address where userid = ?`, [authUser]);
+      if(selectCryptoAddress.length > 0)
+      {
+        paymentAddress = selectCryptoAddress[0].address
+      }else{
+        const CoinpaymentsGetCallbackAddressOpts =  {
+          currency: CPCURRENCY,
+          ipn_url: 'http://localhost:8000/user/api/ipn'
+        
+        }
+        CaInfo = await client.getCallbackAddress(CoinpaymentsGetCallbackAddressOpts)
+        paymentAddress = CaInfo.address
+        await Qry(`INSERT INTO crypto_address (userid, coin, address) values (?,?,?)`, [authUser,CPCURRENCY,CaInfo.address])
       }
-      const Cinfo = await client.createTransaction(CoinpaymentsCreateTransactionOpts)
 
-      await Qry(`INSERT INTO create_deposit (user_id, amount,amount_usd, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?,?)`, [authUser,Cinfo.amount,amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
+        
+
+    //   await Qry(`INSERT INTO create_deposit (user_id, amount, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?)`, [authUser,Cinfo.amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
+    
       res.status(200).json({
         status: "success",
-        data: Cinfo,
+        data: {address:paymentAddress},
       });
 
       // const settingsData = await Qry(
@@ -1358,12 +1368,39 @@ router.post("/gettransactiondetails", async (req, res) => {
 router.post("/ipn", async (req, res) => {
   try {
     const postData = req.body;
-    await Qry(`insert into dummy(d_data) values (${JSON.stringify(postData)})`)
-    const txnData = await Qry(`select * from create_deposit where transaction_id = ?`, [postData.txn_id])
-    if(postData.txn_id === txnData[0].transaction_id && txnData[0].status === "pending")
+    await Qry(`insert into dummy(d_data) values (?)`,[JSON.stringify(postData)])
+    const cryptoAddress = await Qry(`select * from crypto_address where address = ?`, [postData.address])
+    if(postData.address === cryptoAddress[0].address)
     {
-      const updateDeposit = await Qry(`update create_deposit set status = ? where transaction_id = ?`,[postData.status_text, postData.txn_id])
-      const updateUser = await Qry(`update usersdata set current_balance = current_balance + ? where transaction_id = ?`,[postData.status_text, postData.txn_id])
+      const txnData = await Qry(`select * from crypto_payments where txid = ?`, [postData.txn_id])
+      if(txnData.length > 0)
+      {
+        const update = await Qry(`update crypto_payments set confirms = ? , status = ? where txid = ?`, [postData.confirms,postData.status_text,postData.txn_id])
+        if(update)
+        {
+          res.status(200).json({ status: "success"});
+
+        }
+      }else{
+        
+        const settingsData = await Qry(
+          "SELECT * FROM `setting` WHERE keyname IN (?)",
+          [
+            "deposit_fee"
+          ]
+        );
+        const depositFee = settingsData[0].keyvalue;
+        const amountusd = Math.round(postData.fiat_amount)-depositFee;
+        let depositAmount = amountusd - ((amountusd / 100) * depositFee)
+
+        const insert = await Qry(`insert into crypto_payments(userid, txid, address, coin, amount, amount_usd, confirms, status) values (?,?,?,?,?,?,?,?)`, [cryptoAddress[0].userid, postData.txn_id, postData.address,postData.currency, postData.amount, depositAmount,postData.confirms, postData.status_text]);
+        const update_user = await Qry(`update usersdata set current_balance = current_balance+? where id = ?`, [depositAmount,cryptoAddress[0].userid]);
+        if(insert && update_user)
+        {
+          res.status(200).json({ status: "success"});
+        }
+      }
+
     }
   } catch (e) {
     console.log(e.message)
@@ -1377,6 +1414,25 @@ router.post("/getcontracts", async (req, res) => {
     if (authUser) {
       const selectUserQuery = "SELECT * FROM contracts WHERE status = ?";
       const selectUserResult = await Qry(selectUserQuery, ['On']);
+
+      res.status(200).json({
+        status: "success",
+        data: selectUserResult,
+      });
+    }
+  } catch (e) {
+    console.log(e.message)
+    res.status(500).json({ status: "error", message: e.message });
+  }
+});
+
+
+router.post("/depositreport", async (req, res) => {
+  try {
+    const authUser = await checkAuthorization(req, res);
+    if (authUser) {
+      const selectUserQuery = "SELECT * FROM create_deposit where user_id = ?";
+      const selectUserResult = await Qry(selectUserQuery, [authUser]);
 
       res.status(200).json({
         status: "success",
@@ -1846,213 +1902,6 @@ router.post("/buycontract", async (req, res) => {
   }
 });
 
-//deploy user to system and in chargebee
-router.post("/deployuser", async (req, res) => {
-  const postData = req.body;
-  const selectedpkg = CleanHTMLData(CleanDBData(postData.selectedpkg));
-  const amount = CleanHTMLData(CleanDBData(postData.amount));
-  const password = CleanHTMLData(CleanDBData(postData.password));
-  const date = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-  try {
-    const authUser = await checkAuthorization(req, res); // Assuming checkAuthorization function checks the authorization token
-    if (authUser) {
-      let amountToPay;
-      const selectPkg = await Qry(`select * from packages where id = ?`, [
-        selectedpkg,
-      ]);
-      const pkgData = selectPkg[0];
-      const pkgAmount = parseInt(pkgData.amount);
-
-      if (pkgData.fee_type === "percentage") {
-        amountToPay =
-          (parseInt(pkgData.fee) / 100) * pkgAmount + pkgAmount;
-      } else {
-        amountToPay = parseInt(pkgData.fee) + pkgAmount;
-      }
-
-      const selectUserQuery = "SELECT * FROM usersdata WHERE id = ?";
-      const selectUserResult = await Qry(selectUserQuery, [authUser]);
-      const userData = selectUserResult[0];
-      const userSponsorId = userData.sponsorid;
-      const userWalletBalance = parseInt(userData.current_balance);
-      const username = userData.username;
-      const email = userData.email;
-      // Generate a salt for password hashing
-      const saltRounds = 16; // The number of salt rounds determines the complexity of the hashing
-      const salt = bcrypt.genSaltSync(saltRounds);
-
-      const options = {
-        cost: 12, // Specify the hashing cost (higher cost means more secure but slower)
-        salt: salt, // Pass the generated salt
-      };
-      const decryptedPassword = crypto.AES.decrypt(
-        userData.password,
-        encryptionKey
-      ).toString(crypto.enc.Utf8);
-      const passwordMatch = bcrypt.compareSync(password, decryptedPassword);
-
-      if (!passwordMatch) {
-        res.json({
-          status: "error",
-          message: "Incorrect account password",
-        });
-        return;
-      }
-
-      if (userWalletBalance < amountToPay) {
-        res.json({
-          status: "error",
-          message: "Your account balance is below the package amount ",
-        });
-        return;
-      }
-
-      if (pkgData.id === userData.pkgid) {
-        res.json({
-          status: "error",
-          message: `You are already a member of this package ${pkgData.id} === ${userData.pkgid}`,
-        });
-        return;
-      }
-
-      const updateUser = await Qry(
-        "update usersdata set status = ?, pkgid = ?, current_balance = current_balance - ? where id = ?",
-        ["approved", selectedpkg, amountToPay, authUser]
-      );
-
-      const insertPkg = await Qry(
-        "insert into userpackages (pkgid,userid,createdat) values (?,?,?)",
-        [selectedpkg, authUser, date]
-      );
-
-      const settingsData = await Qry(
-        "SELECT * FROM `setting` WHERE keyname IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [
-          "referral_commission_status",
-          "referral_commission_type",
-          "referral_commission_value",
-          "unilevel_status",
-          "unilevel_bonus_level1",
-          "unilevel_bonus_level2",
-          "unilevel_bonus_level3",
-          "unilevel_bonus_level4",
-          "unilevel_bonus_level5",
-          "unilevel_bonus_level6",
-          "unilevel_bonus_level7",
-          "unilevel_bonus_level8",
-          "unilevel_bonus_level9",
-          "unilevel_bonus_level10",
-        ]
-      );
-
-      const referralCommissionType = settingsData[0].keyvalue;
-      const referralCommissionValue = settingsData[1].keyvalue;
-      const referralCommissionStatus = settingsData[2].keyvalue;
-      let commissionAmount;
-
-      if (referralCommissionStatus === "On" && userSponsorId !== "") {
-        referralCommissionType === "Percentage"
-          ? (commissionAmount = (referralCommissionValue / 100) * amount)
-          : referralCommissionType === "Flat"
-            ? (commissionAmount = referralCommissionValue)
-            : (commissionAmount = 0);
-
-        if (commissionAmount > 0) {
-          updateSponsorBalance = await Qry(
-            "update usersdata set current_balance = current_balance + ? where id = ?",
-            [commissionAmount, userSponsorId]
-          );
-
-          insertTransaction = await Qry(
-            "insert into transaction ( receiverid, senderid, amount, type, details) values ( ? , ? , ? ,? , ?)",
-            [
-              userSponsorId,
-              userData.id,
-              commissionAmount,
-              "referralbonus",
-              "received referral bonus on investment from sponsor user " +
-              userData.username,
-            ]
-          );
-        }
-      }
-
-      if (updateUser.affectedRows > 0 && insertPkg.affectedRows > 0) {
-        // Email variables
-        const company = company_name;
-        const title = "Package upgraded successfully " + company;
-        const emailimg = emailImagesLink + "welcome.png";
-        const heading = "Package Upgraded";
-        const subheading = "";
-
-        // Construct the email content
-        const body = `
-              <p style="text-align:left">Dear ${username} <br> you hae successfully purchased the package of amount $${pkgData.amount}:</p>
-
-              <p style="text-align:left">
-              keep upgrading for seamless benefits:
-              </p>
-
-              <p style="text-align:left">
-              Please note that your account must be verified to ensure the security of your information and provide a seamless user experience. If you have any questions or need assistance, please don't hesitate to reach out to our support team at info@aura.com or chat with a support at <a href="https://app.aura.com">https://app.aura.com</a>
-              </p>
-              <p  style="text-align:left">
-              Thank you for choosing ${company}! <br>
-
-              Best regards,<br>
-              The ${company} Team
-              </p>
-            `;
-        const mailOptions = {
-          from: {
-            name: "Aura",
-            address: noreply_email,
-          },
-          to: {
-            name: username,
-            address: email,
-          },
-          subject: "Package Upgraded",
-          html: emailTemplate(
-            title,
-            emailimg,
-            heading,
-            subheading,
-            body,
-            company_name
-          ),
-          text: body,
-        };
-
-        transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-            console.error("Error sending email:", err);
-            res.json({
-              status: "success",
-              message: "Package purchased successfully - email not sent",
-            });
-          } else {
-            res.json({
-              status: "success",
-              message: `You have successfully purchased a package of amount $${pkgData.amount}`,
-            });
-          }
-        });
-      } else {
-        res.json({
-          status: "error",
-          message: "Server error occurred in registration",
-        });
-      }
-    }
-  } catch (error) {
-    res.json({
-      status: "error",
-      errordetails: error.message,
-    });
-  }
-});
 
 router.post("/gethierarchy", async (req, res) => {
   try {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Grid, TextField,IconButton, Tooltip, Alert, AlertTitle } from "@mui/material";
+import { Typography, Grid, TextField,IconButton, Tooltip, Alert, AlertTitle, Button } from "@mui/material";
 import SweetAlert from "app/pages/components/mui/Alerts/SweetAlert";
 import JumboDemoCard from "@jumbo/components/JumboDemoCard";
 import FileCopyIcon from '@mui/icons-material/FileCopy';
@@ -17,31 +17,31 @@ const PaymentBox = ({ paymentData, alertData, setalertData,setShowPaymentBox }) 
       // Function to be called every 30 seconds
     const nav = useNavigate();
 
-  const checkPaymentStatus = () => {
-    let params = {
-        txid:paymentData.txn_id
-    }
-    postRequest('/gettransactiondetails',
-        params,
-        (response) => {
-          if (response?.data?.status === "success") {
-            if(response?.data?.data?.status === 1)
-            {
-              setPaymentDetected(true)
-                setalertData({
-                    show: true,
-                    message: 'Payment detected successfully on network. It will be automatically deposit to your account after required network confirmations',
-                    variant: "success",
-                  });
-            }
-          }
-        },
-        (error) => {
-          console.log(error?.response?.data);
-        }
-      );
+  // const checkPaymentStatus = () => {
+  //   let params = {
+  //       txid:paymentData.txn_id
+  //   }
+  //   postRequest('/gettransactiondetails',
+  //       params,
+  //       (response) => {
+  //         if (response?.data?.status === "success") {
+  //           if(response?.data?.data?.recv_confirms > 0)
+  //           {
+  //             setPaymentDetected(true)
+  //               setalertData({
+  //                   show: true,
+  //                   message: 'Payment detected successfully on network. It will be automatically deposit to your account after required network confirmations',
+  //                   variant: "success",
+  //                 });
+  //           }
+  //         }
+  //       },
+  //       (error) => {
+  //         console.log(error?.response?.data);
+  //       }
+  //     );
     
-      };
+  //     };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -62,14 +62,14 @@ const PaymentBox = ({ paymentData, alertData, setalertData,setShowPaymentBox }) 
     };
   }, [time]);
 
-  useEffect(() => {
-    // Set up an interval to call the function every 30 seconds
-    const functionInterval = setInterval(checkPaymentStatus, 10000); 
+  // useEffect(() => {
+  //   // Set up an interval to call the function every 30 seconds
+  //   const functionInterval = setInterval(checkPaymentStatus, 10000); 
   
-    return () => {
-      clearInterval(functionInterval);
-    };
-  }, []);
+  //   return () => {
+  //     clearInterval(functionInterval);
+  //   };
+  // }, []);
 
   const minutes = Math.floor(time / 60).toString().padStart(2, "0");
   const seconds = (time % 60).toString().padStart(2, "0");
@@ -105,14 +105,14 @@ const PaymentBox = ({ paymentData, alertData, setalertData,setShowPaymentBox }) 
         >
           <Grid container justifyContent="center">
             <Grid item xs={12}>
+
               <Typography variant="h3" color={'warning'}>
-                Do not refresh the page. Payment status will be updated
-                automatically
+                Please send the amount to the following address and it will be automatically added to your account after the required network confirmations
               </Typography>
             </Grid>
             <Grid item xs={12} className="text-center">
-              <Typography variant="body1" className="amount-card-text">
-                AMOUNT: {paymentData.amount}{" "}
+              {/* <Typography variant="body1" className="amount-card-text">
+                AMOUNT: {Math.round(paymentData.amount)}{" "}
                 <span className="amount-card-small">USDT.TRC20</span>
               </Typography>
               <Typography
@@ -123,7 +123,7 @@ const PaymentBox = ({ paymentData, alertData, setalertData,setShowPaymentBox }) 
                 style={{ color: "#f00", border: "1px solid" }}
               >
                  {`${minutes}:${seconds}`}
-              </Typography>
+              </Typography> */}
               <TextField
                 label={'Payment Address'}
                 value={paymentData.address}
@@ -150,7 +150,7 @@ const PaymentBox = ({ paymentData, alertData, setalertData,setShowPaymentBox }) 
                 className="p-3 border-purple"
                 sx={{ textAlign: "center" }}
               >
-                <img src={paymentData.qrcode_url} alt="QR Code" style={{width:'50%'}} />
+                <img src={`https://chart.googleapis.com/chart?cht=qr&chl=${paymentData.address}&chs=160x160&chld=L|0`} alt="QR Code" style={{width:'50%'}} />
               </Grid>
               <Typography variant="body1" sx={{textAlign:'center', marginTop:'16px', marginBottom:'16px'}} className="scan_qr text-center">
                 Scan QR Code with the user's mobile device
@@ -164,8 +164,7 @@ const PaymentBox = ({ paymentData, alertData, setalertData,setShowPaymentBox }) 
               >
 <Alert severity="warning">
   <AlertTitle>Warning</AlertTitle>
-  To pay this amount, send exactly <b>{paymentData.amount} USDT.TRC20</b> to the
-    given address (same network) excluding network fee. Otherwise system will be unable to track the payment
+  Please send the amount on correct network. Otherwise system will be unable to track the payment
 </Alert>
                 
               </Typography>
