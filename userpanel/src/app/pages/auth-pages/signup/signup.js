@@ -80,7 +80,7 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const initialstates = {
-    sponsorid: referralid || 'JKKJ62GJHF',
+    sponsorid: referralid || '2SWNLTC1SB',
     username: '',
     firstname: "",
     lastname: "",

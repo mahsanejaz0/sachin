@@ -1,8 +1,8 @@
 import jwtAxios from "axios";
 
 const jwtAuthAxios = jwtAxios.create({
-    baseURL: "http://localhost:8000/user/api",
-    // baseURL: "https://aura.threearrowstech.com/user/api",
+    // baseURL: "http://localhost:8000/user/api",
+    baseURL: "https://nodeapp.mytether.co/user/api",
     headers: {
         'Content-Type': 'application/json'
     }

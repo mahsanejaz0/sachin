@@ -1,6 +1,6 @@
 {
-  "name": "moneseeker-6.x",
-  "homepage": "https://dashboard.skytsevni.net",
+  "name": "user-6.x",
+  "homepage": "https://app.mytether.co",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import JumboDemoCard from '@jumbo/components/JumboDemoCard/JumboDemoCard';
-import { getdepositlist, postRequest } from 'backendServices/ApiCalls';
+import { getdepositlist, getDepositApi } from 'backendServices/ApiCalls';
 import { Chip, IconButton, Tooltip, Grid } from '@mui/material';
 import { FileCopy as FileCopyIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 
@@ -19,15 +19,13 @@ const DepositReport = () => {
     usertype: 'sender'
   };
 
+
   const UsersData = () => {
-    postRequest(
-      '/selecttransactions',
-      params,
-      (response) => {
-        if (response?.data?.status === 'success') {
-          setUsersData(response?.data?.data);
-        }
-      },
+    getDepositApi((response) => {
+      if (response?.data?.status === 'success') {
+        setUsersData(response?.data?.data);
+      }
+    },
       (error) => {
         console.log(error?.response?.data);
       }
@@ -95,7 +93,7 @@ const DepositReport = () => {
       field: "id",
       headerName: "ID",
       dataGeneratorUniquenessEnabled: true,
-      width: 200,
+      width: 100,
       editable: true,
       groupable: false,
       aggregable: false,
@@ -104,23 +102,32 @@ const DepositReport = () => {
       field: "amount",
       headerName: "Amount",
       dataGeneratorUniquenessEnabled: true,
-      width: 200,
+      width: 100,
       editable: true,
       groupable: false,
       aggregable: false,
     },
     {
-      field: "final_amount",
-      headerName: "Final Amount",
+      field: "address",
+      headerName: "Wallet Address",
       dataGeneratorUniquenessEnabled: true,
-      width: 200,
+      width: 300,
       editable: true,
       groupable: false,
       aggregable: false,
     },
     {
-      field: "details",
-      headerName: "Details",
+      field: "coin",
+      headerName: "Coin",
+      dataGeneratorUniquenessEnabled: true,
+      width: 150,
+      editable: true,
+      groupable: false,
+      aggregable: false,
+    },
+    {
+      field: "txid",
+      headerName: "Transaction ID",
       dataGeneratorUniquenessEnabled: true,
       width: 250,
       editable: true,
@@ -128,7 +135,7 @@ const DepositReport = () => {
       aggregable: false,
     },
     {
-      field: "createdat",
+      field: "dat",
       headerName: "Date",
       dataGeneratorUniquenessEnabled: true,
       width: 200,

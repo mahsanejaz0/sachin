@@ -11,8 +11,8 @@ const MarketingCampaign = ({scrollHeight,lasttransactionsdata}) => {
     const {t} = useTranslation();
     return (
         <JumboCardQuick
-            title={t('widgets.title.ltrns')}
-            subheader={t('widgets.subheader.ltrns')}
+            title={'Recently Deposit'}
+            // subheader={t('widgets.subheader.ltrns')}
             // action={
             //     <React.Fragment>
             //         <Button variant={"contained"} color={"secondary"}  size="small" component={Link} to={'/transaction-summary'}>All Transactions</Button>

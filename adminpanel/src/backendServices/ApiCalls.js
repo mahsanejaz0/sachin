@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8000/admin/api";
-// const API_BASE_URL = "https://aura.threearrowstech.com/admin/api";
+// const API_BASE_URL = "http://localhost:8000/admin/api";
+const API_BASE_URL = "https://nodeapp.mytether.co/admin/api";
 
 function updateAuthorizationHeader() {
   const token = localStorage.getItem("token");
