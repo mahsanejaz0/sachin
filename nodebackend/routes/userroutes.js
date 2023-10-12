@@ -1283,19 +1283,29 @@ router.post("/deposit", async (req, res) => {
         });
         return;
       }
-      const CoinpaymentsCreateTransactionOpts = {
-        currency1: 'USD',
-        currency2: CPCURRENCY,
-        amount: amount,
-        buyer_email: userData.email,
-        ipn_url: 'https://nodeapp.mytether.co/user/api/ipn',
+      let paymentAddress,CaInfo
+      const selectCryptoAddress = await Qry(`select * from crypto_address where userid = ?`, [authUser]);
+      if(selectCryptoAddress.length > 0)
+      {
+        paymentAddress = selectCryptoAddress[0].address
+      }else{
+        const CoinpaymentsGetCallbackAddressOpts =  {
+          currency: CPCURRENCY,
+          ipn_url: 'http://localhost:8000/user/api/ipn'
+        
+        }
+        CaInfo = await client.getCallbackAddress(CoinpaymentsGetCallbackAddressOpts)
+        paymentAddress = CaInfo.address
+        await Qry(`INSERT INTO crypto_address (userid, coin, address) values (?,?,?)`, [authUser,CPCURRENCY,CaInfo.address])
       }
-      const Cinfo = await client.createTransaction(CoinpaymentsCreateTransactionOpts)
 
-      await Qry(`INSERT INTO create_deposit (user_id, amount, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?)`, [authUser,Cinfo.amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
+        
+
+    //   await Qry(`INSERT INTO create_deposit (user_id, amount, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?)`, [authUser,Cinfo.amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
+    
       res.status(200).json({
         status: "success",
-        data: Cinfo,
+        data: {address:paymentAddress},
       });
 
       // const settingsData = await Qry(
@@ -1358,12 +1368,39 @@ router.post("/gettransactiondetails", async (req, res) => {
 router.post("/ipn", async (req, res) => {
   try {
     const postData = req.body;
-    await Qry(`insert into dummy(d_data) values (${JSON.stringify(postData)})`)
-    const txnData = await Qry(`select * from create_deposit where transaction_id = ?`, [postData.txn_id])
-    if(postData.txn_id === txnData[0].transaction_id && txnData[0].status === "pending")
+    await Qry(`insert into dummy(d_data) values (?)`,[JSON.stringify(postData)])
+    const cryptoAddress = await Qry(`select * from crypto_address where address = ?`, [postData.address])
+    if(postData.address === cryptoAddress[0].address)
     {
-      const updateDeposit = await Qry(`update create_deposit set status = ? where transaction_id = ?`,[postData.status_text, postData.txn_id])
-      const updateUser = await Qry(`update usersdata set current_balance = current_balance + ? where transaction_id = ?`,[postData.status_text, postData.txn_id])
+      const txnData = await Qry(`select * from crypto_payments where txid = ?`, [postData.txn_id])
+      if(txnData.length > 0)
+      {
+        const update = await Qry(`update crypto_payments set confirms = ? , status = ? where txid = ?`, [postData.confirms,postData.status_text,postData.txn_id])
+        if(update)
+        {
+          res.status(200).json({ status: "success"});
+
+        }
+      }else{
+        
+        const settingsData = await Qry(
+          "SELECT * FROM `setting` WHERE keyname IN (?)",
+          [
+            "deposit_fee"
+          ]
+        );
+        const depositFee = settingsData[0].keyvalue;
+        const amountusd = Math.round(postData.fiat_amount)-depositFee;
+        let depositAmount = amountusd - ((amountusd / 100) * depositFee)
+
+        const insert = await Qry(`insert into crypto_payments(userid, txid, address, coin, amount, amount_usd, confirms, status) values (?,?,?,?,?,?,?,?)`, [cryptoAddress[0].userid, postData.txn_id, postData.address,postData.currency, postData.amount, depositAmount,postData.confirms, postData.status_text]);
+        const update_user = await Qry(`update usersdata set current_balance = current_balance+? where id = ?`, [depositAmount,cryptoAddress[0].userid]);
+        if(insert && update_user)
+        {
+          res.status(200).json({ status: "success"});
+        }
+      }
+
     }
   } catch (e) {
     console.log(e.message)
