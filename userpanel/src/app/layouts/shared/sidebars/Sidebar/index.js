@@ -32,6 +32,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import SweetAlert from 'app/pages/components/mui/Alerts/SweetAlert';
 import useJumboAuth from '@jumbo/hooks/useJumboAuth';
 import { invitation } from 'backendServices/ApiCalls';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const validationSchema = yup.object({
     fname: yup
@@ -202,20 +203,26 @@ const Sidebar = () => {
 
 
                                                     <Div sx={{ mt: 2, }}>
-                                                        <TextField sx={{ width: '30ch' }}
+                                                        {
+                                                            loginUserData?.status === 'approved' ?
+                                                                <TextField sx={{ width: '30ch' }}
 
-                                                            label={'Invite users with this link'}
-                                                            type='text'
-                                                            disabled
-                                                            value={referrallink}
-                                                            margin="normal"
-                                                            InputProps={{
-                                                                endAdornment:
-                                                                    <IconButton>
-                                                                        <ContentCopy onClick={handleCopy} />
-                                                                    </IconButton>
-                                                            }}
-                                                        /></Div>
+                                                                    label={'Invite users with this link'}
+                                                                    type='text'
+                                                                    disabled
+                                                                    value={referrallink}
+                                                                    margin="normal"
+                                                                    InputProps={{
+                                                                        endAdornment:
+                                                                            <IconButton>
+                                                                                <ContentCopy onClick={handleCopy} />
+                                                                            </IconButton>
+                                                                    }}
+                                                                /> :
+                                                                <Alert icon={<WarningAmberIcon />} variant='outlined' style={{ color: 'red' }}>Please buy a contract to activate your referral link.</Alert>
+                                                        }
+
+                                                    </Div>
                                                 </Box>
                                             </Form>
                                         )}

@@ -6,31 +6,59 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import Stack from "@mui/material/Stack";
 import JumboCardQuick from "@jumbo/components/JumboCardQuick";
 import Span from "@jumbo/shared/Span";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { TrendingDown } from '@mui/icons-material';
+import { Button } from '@mui/material';
 
-const Orders = () => {
-    const {t} = useTranslation();
+const Orders = ({ data, handleClick }) => {
+    const { t } = useTranslation();
+    let color;
+    if (data?.status === 'Active') {
+        color = 'success'
+    }
+    else {
+        color = 'warning'
+    }
+
+    let contractAmount = data?.amount
+    let roiAmount = data?.roi
+    let amount10 = (contractAmount / 100) * 10
+    let status = true
+
+    if (roiAmount >= amount10) {
+        status = false
+    }
+
+
     return (
         <JumboCardQuick
-            title={<Typography variant={"h5"} mb={0}>{t('widgets.title.orders1')}</Typography>}
+            title={<Typography variant={"h5"} mb={0}>{data?.name}</Typography>}
             action={
                 <Stack direction={"row"} spacing={1}>
-                    <Chip label={"Annual"} color={"warning"} size={"small"}/>
-                    <ShowChartIcon fontSize={"small"}/>
+                    <Chip label={data?.status} color={color} size={"small"} />
+                    <ShowChartIcon fontSize={"small"} />
                 </Stack>
             }
-            wrapperSx={{textAlign: 'center'}}
+            wrapperSx={{ textAlign: 'center' }}
             headerSx={{
                 borderBottom: 1,
                 borderBottomColor: 'divider'
             }}
         >
-            <Typography variant={"h2"}>80,790</Typography>
-            <Typography variant={"body1"}>Past week:
-                <Span sx={{color: 'success.main', ml: 1}}>4,626
-                    <TrendingUpIcon fontSize={"small"} sx={{verticalAlign: 'middle', ml: 1}}/>
+            <Typography variant={"h5"}>Contract Amount: ${data?.amount}</Typography>
+            <Typography variant={"body1"}>R.O.I:
+                <Span sx={{ color: 'success.main', ml: 1 }}>${data?.roi}
+                    <TrendingDown fontSize={"small"} sx={{ verticalAlign: 'middle', ml: 1 }} />
                 </Span>
+                <br></br>
+                <br></br>
+                <Typography variant='p' color={'red'}>You can transfer minimum 10% profit of your contract amount.</Typography>
+                <br></br>
+                <br></br>
+                {/* <Typography color={'red'} variant={"p"}>Your contract will expire, when you get 100% profit of your contract amount.</Typography> */}
             </Typography>
+            <Button onClick={() => handleClick(data?.id)} disabled={status} variant='contained'>Transfer To E-Wallet</Button>
+            {/* <Typography variant='p' color={'red'}>You can transfer minimum 10% profit of your contract amount.</Typography> */}
         </JumboCardQuick>
     );
 };

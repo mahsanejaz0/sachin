@@ -1283,29 +1283,28 @@ router.post("/deposit", async (req, res) => {
         });
         return;
       }
-      let paymentAddress,CaInfo
+      let paymentAddress, CaInfo
       const selectCryptoAddress = await Qry(`select * from crypto_address where userid = ?`, [authUser]);
-      if(selectCryptoAddress.length > 0)
-      {
+      if (selectCryptoAddress.length > 0) {
         paymentAddress = selectCryptoAddress[0].address
-      }else{
-        const CoinpaymentsGetCallbackAddressOpts =  {
+      } else {
+        const CoinpaymentsGetCallbackAddressOpts = {
           currency: CPCURRENCY,
           ipn_url: 'http://localhost:8000/user/api/ipn'
-        
+
         }
         CaInfo = await client.getCallbackAddress(CoinpaymentsGetCallbackAddressOpts)
         paymentAddress = CaInfo.address
-        await Qry(`INSERT INTO crypto_address (userid, coin, address) values (?,?,?)`, [authUser,CPCURRENCY,CaInfo.address])
+        await Qry(`INSERT INTO crypto_address (userid, coin, address) values (?,?,?)`, [authUser, CPCURRENCY, CaInfo.address])
       }
 
-        
 
-    //   await Qry(`INSERT INTO create_deposit (user_id, amount, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?)`, [authUser,Cinfo.amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
-    
+
+      //   await Qry(`INSERT INTO create_deposit (user_id, amount, currency1, currency2, transaction_id, status) values (?,?,?,?,?,?)`, [authUser,Cinfo.amount,'USD',CPCURRENCY,Cinfo.txn_id,'pending'])
+
       res.status(200).json({
         status: "success",
-        data: {address:paymentAddress},
+        data: { address: paymentAddress },
       });
 
       // const settingsData = await Qry(
@@ -1347,7 +1346,7 @@ router.post("/gettransactiondetails", async (req, res) => {
     if (authUser) {
       const txid = postData.txid
 
-      const CoinpaymentsGetTxOpts =  {
+      const CoinpaymentsGetTxOpts = {
         txid: txid
       }
       const txDetails = await client.getTx(CoinpaymentsGetTxOpts)
@@ -1368,21 +1367,18 @@ router.post("/gettransactiondetails", async (req, res) => {
 router.post("/ipn", async (req, res) => {
   try {
     const postData = req.body;
-    await Qry(`insert into dummy(d_data) values (?)`,[JSON.stringify(postData)])
+    await Qry(`insert into dummy(d_data) values (?)`, [JSON.stringify(postData)])
     const cryptoAddress = await Qry(`select * from crypto_address where address = ?`, [postData.address])
-    if(postData.address === cryptoAddress[0].address)
-    {
+    if (postData.address === cryptoAddress[0].address) {
       const txnData = await Qry(`select * from crypto_payments where txid = ?`, [postData.txn_id])
-      if(txnData.length > 0)
-      {
-        const update = await Qry(`update crypto_payments set confirms = ? , status = ? where txid = ?`, [postData.confirms,postData.status_text,postData.txn_id])
-        if(update)
-        {
-          res.status(200).json({ status: "success"});
+      if (txnData.length > 0) {
+        const update = await Qry(`update crypto_payments set confirms = ? , status = ? where txid = ?`, [postData.confirms, postData.status_text, postData.txn_id])
+        if (update) {
+          res.status(200).json({ status: "success" });
 
         }
-      }else{
-        
+      } else {
+
         const settingsData = await Qry(
           "SELECT * FROM `setting` WHERE keyname IN (?)",
           [
@@ -1390,14 +1386,13 @@ router.post("/ipn", async (req, res) => {
           ]
         );
         const depositFee = settingsData[0].keyvalue;
-        const amountusd = Math.round(postData.fiat_amount)-depositFee;
+        const amountusd = Math.round(postData.fiat_amount) - depositFee;
         let depositAmount = amountusd - ((amountusd / 100) * depositFee)
 
-        const insert = await Qry(`insert into crypto_payments(userid, txid, address, coin, amount, amount_usd, confirms, status) values (?,?,?,?,?,?,?,?)`, [cryptoAddress[0].userid, postData.txn_id, postData.address,postData.currency, postData.amount, depositAmount,postData.confirms, postData.status_text]);
-        const update_user = await Qry(`update usersdata set current_balance = current_balance+? where id = ?`, [depositAmount,cryptoAddress[0].userid]);
-        if(insert && update_user)
-        {
-          res.status(200).json({ status: "success"});
+        const insert = await Qry(`insert into crypto_payments(userid, txid, address, coin, amount, amount_usd, confirms, status) values (?,?,?,?,?,?,?,?)`, [cryptoAddress[0].userid, postData.txn_id, postData.address, postData.currency, postData.amount, depositAmount, postData.confirms, postData.status_text]);
+        const update_user = await Qry(`update usersdata set current_balance = current_balance+? where id = ?`, [depositAmount, cryptoAddress[0].userid]);
+        if (insert && update_user) {
+          res.status(200).json({ status: "success" });
         }
       }
 
@@ -1414,6 +1409,28 @@ router.post("/getcontracts", async (req, res) => {
     if (authUser) {
       const selectUserQuery = "SELECT * FROM contracts WHERE status = ?";
       const selectUserResult = await Qry(selectUserQuery, ['On']);
+
+      res.status(200).json({
+        status: "success",
+        data: selectUserResult,
+      });
+    }
+  } catch (e) {
+    console.log(e.message)
+    res.status(500).json({ status: "error", message: e.message });
+  }
+});
+
+
+router.post("/getusercontracts", async (req, res) => {
+  try {
+    const authUser = await checkAuthorization(req, res);
+    if (authUser) {
+      const selectUserQuery = `select uc.*, c.name, c.amount from userpackages uc 
+      LEFT JOIN contracts c ON uc.pkgid = c.id 
+      where userid = ?
+      `;
+      const selectUserResult = await Qry(selectUserQuery, [authUser]);
 
       res.status(200).json({
         status: "success",
@@ -1735,14 +1752,13 @@ router.post("/buycontract", async (req, res) => {
       const pkgData = selectPkg[0];
       const pkgAmount = parseInt(pkgData.amount);
 
+      const selectcheckPkg = await Qry(`select * from userpackages where userid = ? and pkgid = ? and status = ?`, [authUser, selectedpkg, 'Active']);
+      const arrayLength = selectcheckPkg.length;
+
       const selectUserQuery = "SELECT * FROM usersdata WHERE id = ?";
       const selectUserResult = await Qry(selectUserQuery, [authUser]);
       const userData = selectUserResult[0];
-
-      const userSponsorId = userData.sponsorid;
       const userWalletBalance = parseInt(userData.current_balance);
-      const username = userData.username;
-      const email = userData.email;
       // Generate a salt for password hashing
       const saltRounds = 16; // The number of salt rounds determines the complexity of the hashing
       const salt = bcrypt.genSaltSync(saltRounds);
@@ -1773,7 +1789,7 @@ router.post("/buycontract", async (req, res) => {
         return;
       }
 
-      if (pkgData.id === userData.pkgid) {
+      if (arrayLength > 0) {
         res.json({
           status: "error",
           message: `You have already buy this contract.`,
@@ -1782,7 +1798,7 @@ router.post("/buycontract", async (req, res) => {
       }
 
       const updateUser = await Qry(
-        "update usersdata set status = ?, pkgid = ?, current_balance = current_balance - ? where id = ?",
+        "update usersdata set status = ?, pkgid = ?, current_balance = current_balance - ?  where id = ?",
         ["approved", selectedpkg, pkgAmount, authUser]
       );
 
@@ -1807,7 +1823,7 @@ router.post("/buycontract", async (req, res) => {
       let x = 1;
       if (uniLevelStatus === 'On') {
         while (x <= 5 && sponsorid !== '') {
-          bonusValue = settingsData[x].keyvalue
+          bonusValue = (settingsData[x].keyvalue / 100) * pkgAmount
           updateSponsorBalance = await Qry("update usersdata set current_balance = current_balance + ? where id = ?", [bonusValue, sponsorid])
 
           insertTransaction = await Qry("insert into transaction ( receiverid, senderid, amount, type, details) values ( ? , ? , ? ,? , ?)", [sponsorid, authUser, bonusValue, 'Level Bonus', `Received Level ${x} commission from user ${userData.username}`])
@@ -1903,6 +1919,61 @@ router.post("/buycontract", async (req, res) => {
 });
 
 
+router.post("/transferroi", async (req, res) => {
+  const postData = req.body;
+  let id = postData.id
+  try {
+    const authUser = await checkAuthorization(req, res); // Assuming checkAuthorization function checks the authorization token
+    if (authUser) {
+
+      const selectPkg = await Qry(`select * from userpackages where id = ?`, [id]);
+      const pkgData = selectPkg[0];
+
+      const selectUser = await Qry(`select * from usersdata where id = ?`, [pkgData.userid]);
+      const userData = selectUser[0];
+
+      const selectContract = await Qry(`select * from contracts where id = ?`, [pkgData.pkgid]);
+      const contractData = selectContract[0];
+
+      let roiAmount = pkgData.roi
+      let contractAmount = contractData.amount
+
+      let amount10 = (contractAmount / 100) * 10
+
+      if (roiAmount < amount10) {
+        res.json({
+          status: "error",
+          message: "You can transfer minimum 10% of your contract amount.",
+        });
+        return;
+      }
+
+      updateSponsorBalance = await Qry("update usersdata set current_balance = current_balance + ? where id = ?", [roiAmount, authUser])
+      updateSponsorBalance = await Qry("update userpackages set roi = ? where id = ?", [0, id])
+      insertTransaction = await Qry("insert into transaction ( receiverid, senderid, amount, type, details) values ( ? , ? , ? ,? , ?)", [authUser, 0, roiAmount, 'ROI Transfer', `You have transfer $${roiAmount} to your E-Wallet`])
+
+      const selectUserQuery = `select uc.*, c.name, c.amount from userpackages uc 
+      LEFT JOIN contracts c ON uc.pkgid = c.id 
+      where userid = ?
+      `;
+      const selectUserResult = await Qry(selectUserQuery, [authUser]);
+
+      res.json({
+        status: "success",
+        message: `You have successfully transfer $${roiAmount} to your E-Wallet`,
+        data: selectUserResult,
+      });
+    }
+  } catch (error) {
+    console.log(error)
+    res.json({
+      status: "error",
+      errordetails: error.message,
+    });
+  }
+});
+
+
 router.post("/gethierarchy", async (req, res) => {
   try {
     const authUser = await checkAuthorization(req, res);
@@ -1947,99 +2018,71 @@ router.post("/gethierarchy", async (req, res) => {
 
 router.post("/roicronjob", async (req, res) => {
   try {
-    const authUser = await checkAuthorization(req, res);
-    const maxDepth = 3;
-    let finalData = [];
-
     const settingsData = await Qry(
-      "SELECT * FROM `setting` WHERE keyname IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "SELECT * FROM `setting` WHERE keyname IN (?)",
       [
-        "referral_commission_status",
-        "referral_commission_type",
-        "referral_commission_value",
-        "unilevel_status",
-        "unilevel_bonus_level1",
-        "unilevel_bonus_level2",
-        "unilevel_bonus_level3",
-        "unilevel_bonus_level4",
-        "unilevel_bonus_level5",
-        "unilevel_bonus_level6",
-        "unilevel_bonus_level7",
-        "unilevel_bonus_level8",
-        "unilevel_bonus_level9",
-        "unilevel_bonus_level10",
+        "roi",
       ]
     );
+    const roi = settingsData[0].keyvalue;
 
-    const uniLevelStatus = settingsData[3].keyvalue;
+    const selectPkgQuery = `SELECT * from userpackages where status = ?`;
+    const selectPkgResult = await Qry(selectPkgQuery, ['Active']);
+    selectPkgResult.map(async (data) => {
 
-    if (authUser) {
-      const selectUserQuery = `SELECT ud.pkgid,ud.sponsorid,ud.id,ud.username, p.roi as pkg_roi_percentage,p.amount as pkg_amount FROM usersdata ud
-      LEFT JOIN packages p ON ud.pkgid = p.id 
-      where ud.status = 'approved'
-      `;
-      const selectUserResult = await Qry(selectUserQuery, [authUser]);
-      selectUserResult.map(async (user) => {
-        const roi_percentage = user.pkg_roi_percentage;
-        const pkg_amount = user.pkg_amount;
-        const roi_amount = (roi_percentage / 100) * pkg_amount;
-        const userId = user.id;
-        const userSponsorId = user.sponsorid;
-        const username = user.username;
+      const selectContract = `SELECT * from contracts where id = ?`;
+      const selectContractResult = await Qry(selectContract, [data.pkgid]);
+      const contractAmount = selectContractResult[0].amount;
 
-        updateUserBalance = await Qry(
+      const roi_amount = (contractAmount / 100) * roi;
+
+      updateROI = await Qry(
+        "update userpackages set roi = roi + ?, total_roi = total_roi + ? where id = ?",
+        [roi_amount, roi_amount, data.id]
+      );
+
+      insertTransaction = await Qry(
+        "insert into transaction ( receiverid, senderid, amount, type, details) values ( ? , ? , ? ,? , ?)",
+        [
+          data.userid,
+          0,
+          roi_amount,
+          "roi",
+          `Daily income ${roi}% on contract of $${contractAmount}`,
+        ]
+      );
+
+
+      const selectCheckPkgQuery = `SELECT * from userpackages where id = ?`;
+      const selectCheckPkgResult = await Qry(selectCheckPkgQuery, [data.id]);
+
+      if (selectCheckPkgResult[0].total_roi >= contractAmount) {
+        updateStatus = await Qry(
+          "update userpackages set status = ? where id = ?",
+          ['Expired', data.id]
+        );
+
+        updateUser = await Qry(
           "update usersdata set current_balance = current_balance + ? where id = ?",
-          [roi_amount, userId]
+          [contractAmount, data.userid]
         );
 
         insertTransaction = await Qry(
           "insert into transaction ( receiverid, senderid, amount, type, details) values ( ? , ? , ? ,? , ?)",
           [
-            userId,
+            data.userid,
             0,
-            roi_amount,
-            "roi",
-            `Daily income ${roi_percentage}% on pkg of  $${pkg_amount}`,
+            contractAmount,
+            "Contract Amount",
+            `Your contract is expired. You have got $${contractAmount} to yout E-Wallet`,
           ]
         );
+      }
 
-        let bonusValue, bonusType, bonusDetails;
-        let x = 4;
-        let level = 1;
-        let sponsorid = userSponsorId;
-        if (uniLevelStatus === "On") {
-          while (x <= 8 && sponsorid !== "") {
-            if (level === 1) {
-              bonusType = "referralbonus";
-              bonusDetails = `Received referral commission from user ${username} on  daily income`;
-            } else {
-              bonusType = "unilevelbonus";
-              bonusDetails = `Received Level ${level} commission from user ${username} on daily income`;
-            }
-            const bonusPercentage = settingsData[x].keyvalue;
-            bonusValue = (bonusPercentage / 100) * roi_amount;
-            updateSponsorBalance = await Qry(
-              "update usersdata set current_balance = current_balance + ? where id = ?",
-              [bonusValue, sponsorid]
-            );
+    });
 
-            insertTransaction = await Qry(
-              "insert into transaction ( receiverid, senderid, amount, type, details) values ( ? , ? , ? ,? , ?)",
-              [sponsorid, userId, bonusValue, bonusType, bonusDetails]
-            );
-            const snameData = await Qry(
-              "SELECT * FROM usersdata WHERE id = ?",
-              [sponsorid]
-            );
-            sponsorid = snameData[0].sponsorid;
-            x++;
-            level++;
-          }
-        }
-      });
+    res.status(200).json({ status: "succes", message: "done" });
 
-      res.status(200).json({ status: "succes", message: "done" });
-    }
   } catch (e) {
     res.status(500).json({ status: "error", message: e.message });
   }

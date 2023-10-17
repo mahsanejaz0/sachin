@@ -29,6 +29,12 @@ const menus = [
                 icon: <AddCardIcon sx={{ fontSize: 20 }} />
             },
             {
+                uri: "/contracts",
+                label: 'Contracts',
+                type: "nav-item",
+                icon: <GraphicEqIcon sx={{ fontSize: 20 }} />
+            },
+            {
                 uri: "/buy-contract",
                 label: 'Buy Contract',
                 type: "nav-item",
@@ -63,7 +69,7 @@ const menus = [
                     },
                     {
                         uri: "/unilevel-summary",
-                        label: "Level Bonus Summary",
+                        label: "Referral Income",
                         type: "nav-item"
                     },
                     // {

@@ -293,6 +293,21 @@ export function depositApi(params, callback, errorCallback) {
     });
 }
 
+export function transferROIAPi(params, callback, errorCallback) {
+  updateAuthorizationHeader()
+  axios.post(API_BASE_URL + '/transferroi', params)
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
 export function buyContractApi(params, callback, errorCallback) {
   updateAuthorizationHeader()
   axios.post(API_BASE_URL + '/buycontract', params)
@@ -312,6 +327,24 @@ export function getContractsApi(callback, errorCallback) {
   updateAuthorizationHeader()
 
   axios.post(API_BASE_URL + '/getcontracts', {
+
+  })
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+export function getUserContractsApi(callback, errorCallback) {
+  updateAuthorizationHeader()
+
+  axios.post(API_BASE_URL + '/getusercontracts', {
 
   })
     .then(response => {
