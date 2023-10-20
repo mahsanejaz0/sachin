@@ -203,13 +203,13 @@ const Login = ({disableSmLogin}) => {
                             <p>{randomQuote}</p>
                             </Typography>
                             <Typography variant={"body1"}>
-                                {/* <MyLink
+                                <MyLink
                                     style={{color:'yellow'}}
                                     to={"/forget-password"}
                                     color={"inherit"}
                                     underline={'none'}
                                 >Forgot your password? Recover Now
-                                </MyLink> */}
+                                </MyLink>
                             </Typography>
                         </Div>
 

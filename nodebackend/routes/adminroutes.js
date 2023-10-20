@@ -539,12 +539,26 @@ router.post("/getuserslist", async (req, res) => {
         status = 'pending';
       }
 
-      const getUsers = `SELECT emailstatus,
-      ud.id as userid, ud.username,ud.randomcode, ud.firstname, ud.lastname,ud.current_balance, ud.email, ud.createdat, ud.mobile, ud.loginstatus
-      FROM usersdata ud
-      where usertype = ? and status = ?
-      ORDER BY ud.id DESC
-      `;
+      const getUsers = `SELECT
+  ud.id as userid,
+  ud.username,
+  ud.randomcode,
+  ud.firstname,
+  ud.lastname,
+  ud.current_balance,
+  ud.email,
+  ud.createdat,
+  ud.mobile,
+  ud.loginstatus,
+  COUNT(up.id) as active_package_count,
+  SUM(c.amount) as total_amount_of_active_packages
+FROM usersdata ud
+LEFT JOIN userpackages up ON ud.id = up.userid
+LEFT JOIN contracts c ON up.pkgid = c.id
+WHERE ud.usertype = ? AND ud.status = ?
+  AND up.status = 'Active'
+GROUP BY ud.id, ud.username, ud.randomcode, ud.firstname, ud.lastname, ud.current_balance, ud.email, ud.createdat, ud.mobile, ud.loginstatus;
+`;
       const UsersData = await Qry(getUsers, ["user", status]);
 
       res.json({
@@ -560,6 +574,7 @@ router.post("/getuserslist", async (req, res) => {
     });
   }
 });
+
 
 
 //Get Users List

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import JumboDemoCard from "@jumbo/components/JumboDemoCard";
 import Box from "@mui/material/Box";
-import { CircularProgress, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import { Button, CircularProgress, Grid, InputLabel, MenuItem, Select } from "@mui/material";
 import { Form, Formik } from "formik";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SweetAlert from "app/pages/components/mui/Alerts/SweetAlert";
@@ -104,6 +104,9 @@ const Contracts = () => {
       {alertData.show && (
         <SweetAlert alertData={alertData} setalertData={setalertData} />
       )}
+      <Grid item xs={12} sm={12}>
+        <Button variant="contained" onClick={() => navigate('/buy-contract')}>Buy Contract</Button>
+      </Grid>
       {
         contractData?.map((data, index) => (
           <Grid item xs={12} sm={4} key={index}>

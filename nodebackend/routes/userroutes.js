@@ -158,7 +158,7 @@ router.post("/register", async (req, res) => {
             <p style="text-align:left">${verify_link}</p>
 
             <p style="text-align:left">
-            Please note that your account must be verified to ensure the security of your information and provide a seamless user experience. If you have any questions or need assistance, please don't hesitate to reach out to our support team at info@aura.com or chat with a support at <a href="https://app.aura.com">https://app.aura.com</a>
+            Please note that your account must be verified to ensure the security of your information and provide a seamless user experience.
             </p>
             <p  style="text-align:left">
             Thank you for choosing ${company}! <br>
@@ -200,13 +200,9 @@ router.post("/register", async (req, res) => {
           res.json({
             status: "success",
             message:
-              "Your account has been registered successfully. Please check your email for verification. Please check your spam folder. If you still don't get the activation email, contact us: support@aura.com",
+              "Your account has been registered successfully. Please check your email for verification. Please check your spam folder.",
           });
         }
-      });
-      res.json({
-        status: "success",
-        message: "You have been registered successfully.",
       });
     } else {
       res.json({
@@ -1789,13 +1785,13 @@ router.post("/buycontract", async (req, res) => {
         return;
       }
 
-      if (arrayLength > 0) {
-        res.json({
-          status: "error",
-          message: `You have already buy this contract.`,
-        });
-        return;
-      }
+      // if (arrayLength > 0) {
+      //   res.json({
+      //     status: "error",
+      //     message: `You have already buy this contract.`,
+      //   });
+      //   return;
+      // }
 
       const updateUser = await Qry(
         "update usersdata set status = ?, pkgid = ?, current_balance = current_balance - ?  where id = ?",
