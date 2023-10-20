@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/user/api';
-// const API_BASE_URL = 'https://aura.threearrowstech.com/user/api';
+// const API_BASE_URL = 'http://localhost:8000/user/api';
+const API_BASE_URL = 'https://nodeapp.mytether.co/user/api';
 
 function updateAuthorizationHeader() {
   const token = localStorage.getItem('token');
@@ -293,6 +293,21 @@ export function depositApi(params, callback, errorCallback) {
     });
 }
 
+export function transferROIAPi(params, callback, errorCallback) {
+  updateAuthorizationHeader()
+  axios.post(API_BASE_URL + '/transferroi', params)
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
 export function buyContractApi(params, callback, errorCallback) {
   updateAuthorizationHeader()
   axios.post(API_BASE_URL + '/buycontract', params)
@@ -312,6 +327,43 @@ export function getContractsApi(callback, errorCallback) {
   updateAuthorizationHeader()
 
   axios.post(API_BASE_URL + '/getcontracts', {
+
+  })
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+export function getUserContractsApi(callback, errorCallback) {
+  updateAuthorizationHeader()
+
+  axios.post(API_BASE_URL + '/getusercontracts', {
+
+  })
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
+
+export function getDepositApi(callback, errorCallback) {
+  updateAuthorizationHeader()
+
+  axios.post(API_BASE_URL + '/depositreport', {
 
   })
     .then(response => {

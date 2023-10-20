@@ -12,19 +12,20 @@ const CampaignItem = ({ item }) => {
                     {item?.icon}
                 </Avatar>
             </ListItemAvatar> */}
-            <ListItemText sx={{
-                flexBasis: '30%'
-            }} primary={<Typography variant='h5' mb={.5}>{item?.type.charAt(0).toUpperCase() + item?.type.slice(1)}</Typography>}
-                secondary={item?.details}
+            <ListItemText primary={<Typography variant='h5' mb={.5}>{item?.senderusername}</Typography>}
+                secondary={'Deposit'}
             />
-            <ListItemText primary={<Typography variant="body1" sx={{ fontSize: 13 }}>${item?.amount}</Typography>}
+            <ListItemText primary={<Typography variant="body1" sx={{ fontSize: 13 }}>{item?.amount}</Typography>}
                 secondary={"Amount"}
             />
+            <ListItemText primary={<Typography variant="body1" sx={{ fontSize: 13 }}>{item?.coin}</Typography>}
+                secondary={"Coin"}
+            />
+            <ListItemText primary={<Typography variant="body1" sx={{ fontSize: 13 }}>{item?.dat}</Typography>}
+                secondary={"Created At"}
+            />
             <ListItemText sx={{ alignSelf: 'self-start', flexGrow: 0 }}>
-                {item?.type === 'roi' ?
-                    <TrendingUpIcon color='success' sx={{ ml: 1, verticalAlign: 'middle' }} fontSize={"small"} /> :
-                    <TrendingDownIcon color='error' sx={{ ml: 1, verticalAlign: 'middle' }} fontSize={"small"} />
-                }
+                <TrendingDownIcon color='error' sx={{ ml: 1, verticalAlign: 'middle' }} fontSize={"small"} />
             </ListItemText>
         </ListItemButton>
     );

@@ -16,7 +16,7 @@ const validationSchema = yup.object({
   selectedpkg: yup.mixed("select a package").required("package is required"),
   password: yup.string("Enter your password").required("Password is required"),
 });
-const Payout = () => {
+const BuyContract = () => {
   const navigate = useNavigate()
   const { loginUserData, loading, setloginUserData } = useContext(CustomProvider);
   const [contractData, setContractData] = React.useState([])
@@ -197,4 +197,4 @@ const Payout = () => {
   );
 };
 
-export default Payout;
+export default BuyContract;

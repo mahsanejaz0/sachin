@@ -76,7 +76,7 @@ const DepositReport = () => {
       field: "senderusername",
       headerName: "Username",
       dataGeneratorUniquenessEnabled: true,
-      width: 150,
+      width: 200,
       editable: false,
       groupable: false,
       aggregable: false,
@@ -90,44 +90,44 @@ const DepositReport = () => {
       field: "amount",
       headerName: "Amount",
       dataGeneratorUniquenessEnabled: true,
-      width: 150,
-      editable: false,
+      width: 100,
+      editable: true,
       groupable: false,
       aggregable: false,
-      renderCell: (params) => `$${params.value}`
     },
     {
-      field: "final_amount",
-      headerName: "Final Amount",
-      dataGeneratorUniquenessEnabled: true,
-      width: 150,
-      editable: false,
-      groupable: false,
-      aggregable: false,
-      renderCell: (params) => `$${params.value}`
-    },
-    {
-      field: "details",
-      headerName: "Details",
+      field: "address",
+      headerName: "Wallet Address",
       dataGeneratorUniquenessEnabled: true,
       width: 300,
-      editable: false,
+      editable: true,
       groupable: false,
       aggregable: false,
-      renderCell: (params) => {
-        const details = params.row.details;
-        const senderUsername = params.row.senderusername; // Assuming the username is stored in the variable 'username'
-        const replacedString = details.replace("you", senderUsername);
-        // In your React component, you can render the replaced string
-        return <div>{replacedString}</div>;
-      }
     },
     {
-      field: "createdat",
+      field: "coin",
+      headerName: "Coin",
+      dataGeneratorUniquenessEnabled: true,
+      width: 150,
+      editable: true,
+      groupable: false,
+      aggregable: false,
+    },
+    {
+      field: "txid",
+      headerName: "Transaction ID",
+      dataGeneratorUniquenessEnabled: true,
+      width: 250,
+      editable: true,
+      groupable: false,
+      aggregable: false,
+    },
+    {
+      field: "dat",
       headerName: "Date",
       dataGeneratorUniquenessEnabled: true,
       width: 200,
-      editable: false,
+      editable: true,
       groupable: false,
       aggregable: false,
     }

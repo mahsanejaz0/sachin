@@ -10,7 +10,7 @@ const port = process.env.PORT || 8000;
 const app = express()
 
 const corsOptions = {
-  origin: ['http://localhost:3000','http://localhost:3005'],
+  origin: ['http://localhost:3000','http://localhost:3005','https://admin.mytether.co/','http://admin.mytether.co/','https://app.mytether.co/','http://app.mytether.co/'],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'authorization'],
 };

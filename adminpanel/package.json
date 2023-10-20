@@ -1,6 +1,6 @@
 {
-  "name": "jumbo-6.x",
-  "homepage": "https://adminaura.skytsevni.net",
+  "name": "admin-6.x",
+  "homepage": "https://admin.mytether.co",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

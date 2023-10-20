@@ -24,8 +24,8 @@ const {
 } = require("../helpers/functions");
 const secretKey = process.env.jwtSecretKey;
 
-const backoffice_link = "https://aura.threearrowstech.com/";
-const weblink = "https://adminaura.skytsevni.net/";
+const backoffice_link = "https://nodeapp.mytether.co/";
+const weblink = "https://admin.mytether.co/";
 const emailImagesLink =
   "https://threearrowstech.com/projects/quantum/public/images/email-images/";
 const noreply_email = "mails@mytether.co";
@@ -1684,22 +1684,17 @@ router.post("/report", async (req, res) => {
 
 
 router.post("/depositsummary", async (req, res) => {
-  const postData = req.body;
-  const reportType = CleanHTMLData(CleanDBData(postData.type));
   try {
     const authUser = await adminAuthorization(req, res); // Assuming checkAuthorization function checks the authorization token
 
     if (authUser) {
       const reportSelectQuery = `
-      SELECT t.id as id, u1.username AS senderusername, u2.username AS receiverusername, t.final_amount, t.amount, t.createdat, t.approvedat, t.status, t.details, t.type,t.rejectreason, t.hash, t.payoutmethod, t.payoutaccount1, t.payoutaccount2, t.payoutaccount3, t.seen
-      FROM transaction t
-      LEFT JOIN usersdata u1 ON t.senderid = u1.id
-      LEFT JOIN usersdata u2 ON t.receiverid = u2.id
-      WHERE t.type=? ORDER BY t.id DESC    
-              `;
-
-      const reportSelectParams = ['deposit'];
-      let reportSelectResult = await Qry(reportSelectQuery, reportSelectParams);
+      SELECT t.*, u1.username AS senderusername
+      FROM crypto_payments t
+      LEFT JOIN usersdata u1 ON t.userid = u1.id
+      ORDER BY t.id DESC    
+`;
+      let reportSelectResult = await Qry(reportSelectQuery);
 
       if (reportSelectResult.length < 1) {
         reportSelectResult = [];
@@ -1985,7 +1980,7 @@ router.post("/dashboard", async (req, res) => {
 
     if (authUser) {
       const selectInvestmentQuery =
-        "SELECT SUM(amount) as total, type FROM transaction WHERE type = 'deposit'";
+        "SELECT SUM(amount) as total FROM crypto_payments";
       const investmentData = await Qry(selectInvestmentQuery);
       if (investmentData[0].total === null || investmentData[0].total === '') {
         investmentData[0].total = 0
@@ -2075,10 +2070,10 @@ router.post("/lasttransactions", async (req, res) => {
     const authUser = await checkAuthorization(req, res);
     if (authUser) {
       const transactionSelect = await Qry(`
-      SELECT * 
-      FROM transaction
-      WHERE createdat > DATE(NOW() - INTERVAL 7 DAY) AND (type = 'roi' or type = 'deposit')
-      ORDER BY id DESC
+      SELECT t.*, u1.username AS senderusername
+      FROM crypto_payments t
+      LEFT JOIN usersdata u1 ON t.userid = u1.id
+      ORDER BY t.id DESC
     `);
 
       const transactiondbData = transactionSelect;
