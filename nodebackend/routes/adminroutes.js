@@ -28,7 +28,7 @@ const backoffice_link = "https://aura.threearrowstech.com/";
 const weblink = "https://adminaura.skytsevni.net/";
 const emailImagesLink =
   "https://threearrowstech.com/projects/quantum/public/images/email-images/";
-const noreply_email = "mails@skytsevni.net";
+const noreply_email = "mails@mytether.co";
 const company_name = "Bank Of Tether";
 
 // Create a multer middleware for handling the file upload
@@ -193,7 +193,7 @@ router.post("/forgetpassword", async (req, res) => {
 
     const mailOptions = {
       from: {
-        name: "Aura",
+        name: "Bank Of Tether",
         address: noreply_email,
       },
       to: {
@@ -2272,7 +2272,7 @@ router.post("/payoutaction", async (req, res) => {
 
         // const mailOptions = {
         //   from: {
-        //     name: "Aura",
+        //     name: "Bank Of Tether",
         //     address: noreply_email,
         //   },
         //   to: {
@@ -2348,7 +2348,7 @@ router.post("/payoutaction", async (req, res) => {
 
         // const mailOptions = {
         //   from: {
-        //     name: "Aura",
+        //     name: "Bank Of Tether",
         //     address: noreply_email,
         //   },
         //   to: {

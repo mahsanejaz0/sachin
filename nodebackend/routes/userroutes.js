@@ -27,7 +27,7 @@ const backoffice_link = "http://localhost:8000/";
 const weblink = "https://app.mytether.co/";
 const emailImagesLink =
   "https://threearrowstech.com/projects/quantum/public/images/email-images/";
-const noreply_email = "mails@skytsevni.net";
+const noreply_email = "mails@mytether.co";
 const company_name = "Bank Of Tether";
 
 const CoinpaymentsCredentials = {
@@ -136,74 +136,74 @@ router.post("/register", async (req, res) => {
     );
 
     if (insertResult.affectedRows > 0) {
-      // Email variables
-      // const company = company_name;
-      // const verify_link = `${weblink}login/${emailToken}/${email}`;
+      //Email variables
+      const company = company_name;
+      const verify_link = `${weblink}login/${emailToken}/${email}`;
 
-      // const title = "Verify Your Account Registration on " + company;
-      // const emailimg = emailImagesLink + "welcome.png";
-      // const heading = "Registered Successfully";
-      // const subheading = "";
+      const title = "Verify Your Account Registration on " + company;
+      const emailimg = emailImagesLink + "welcome.png";
+      const heading = "Registered Successfully";
+      const subheading = "";
 
-      // // Construct the email content
-      // const body = `
-      //       <p style="text-align:left">Dear ${username} <br> Thank you for registering with ${company}! We are delighted to have you on board. To complete the registration process and unlock full access to our platform, please verify your account by clicking the "Verify Account" button below:</p>
+      // Construct the email content
+      const body = `
+            <p style="text-align:left">Dear ${username} <br> Thank you for registering with ${company}! We are delighted to have you on board. To complete the registration process and unlock full access to our platform, please verify your account by clicking the "Verify Account" button below:</p>
 
-      //       <p><a href="${verify_link}" style="padding: 10px 15px;display: inline-block;border-radius: 5px;background: #1a253a;color: #ffffff;" class="btn btn-primary">Verify Account</a></p>
+            <p><a href="${verify_link}" style="padding: 10px 15px;display: inline-block;border-radius: 5px;background: #1a253a;color: #ffffff;" class="btn btn-primary">Verify Account</a></p>
 
-      //       <p style="text-align:left">
-      //       If you are unable to click the button, you can also copy and paste the following link into your web browser:
-      //       </p>
+            <p style="text-align:left">
+            If you are unable to click the button, you can also copy and paste the following link into your web browser:
+            </p>
 
-      //       <p style="text-align:left">${verify_link}</p>
+            <p style="text-align:left">${verify_link}</p>
 
-      //       <p style="text-align:left">
-      //       Please note that your account must be verified to ensure the security of your information and provide a seamless user experience. If you have any questions or need assistance, please don't hesitate to reach out to our support team at info@aura.com or chat with a support at <a href="https://app.aura.com">https://app.aura.com</a>
-      //       </p>
-      //       <p  style="text-align:left">
-      //       Thank you for choosing ${company}! <br>
+            <p style="text-align:left">
+            Please note that your account must be verified to ensure the security of your information and provide a seamless user experience. If you have any questions or need assistance, please don't hesitate to reach out to our support team at info@aura.com or chat with a support at <a href="https://app.aura.com">https://app.aura.com</a>
+            </p>
+            <p  style="text-align:left">
+            Thank you for choosing ${company}! <br>
 
-      //       Best regards,<br>
-      //       The ${company} Team
-      //       </p>
-      //     `;
-      // const mailOptions = {
-      //   from: {
-      //     name: "Aura",
-      //     address: noreply_email,
-      //   },
-      //   to: {
-      //     name: username,
-      //     address: email,
-      //   },
-      //   subject: "Signup successfully on " + company_name,
-      //   html: emailTemplate(
-      //     title,
-      //     emailimg,
-      //     heading,
-      //     subheading,
-      //     body,
-      //     company_name
-      //   ),
-      //   text: body,
-      // };
+            Best regards,<br>
+            The ${company} Team
+            </p>
+          `;
+      const mailOptions = {
+        from: {
+          name: "Bank Of Tether",
+          address: noreply_email,
+        },
+        to: {
+          name: username,
+          address: email,
+        },
+        subject: "Signup successfully on " + company_name,
+        html: emailTemplate(
+          title,
+          emailimg,
+          heading,
+          subheading,
+          body,
+          company_name
+        ),
+        text: body,
+      };
 
-      // transporter.sendMail(mailOptions, (err, info) => {
-      //   if (err) {
-      //     console.error("Error sending email:", err);
-      //     res.json({
-      //       status: "success",
-      //       message: "Account created but email not sent",
-      //       error: err,
-      //     });
-      //   } else {
-      //     res.json({
-      //       status: "success",
-      //       message:
-      //         "Your account has been registered successfully. Please check your email for verification. Please check your spam folder. If you still don't get the activation email, contact us: support@aura.com",
-      //     });
-      //   }
-      // });
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error("Error sending email:", err);
+          res.json({
+            status: "success",
+            message: "Account created but email not sent",
+            error: err,
+          });
+        } else {
+          res.json({
+            status: "success",
+            message:
+              "Your account has been registered successfully. Please check your email for verification. Please check your spam folder. If you still don't get the activation email, contact us: support@aura.com",
+          });
+        }
+      });
       res.json({
         status: "success",
         message: "You have been registered successfully.",
@@ -328,7 +328,7 @@ router.post("/forgetpassword", async (req, res) => {
 
     const mailOptions = {
       from: {
-        name: "aura",
+        name: "Bank Of Tether",
         address: noreply_email,
       },
       to: {
@@ -1390,7 +1390,7 @@ router.post("/ipn", async (req, res) => {
           ]
         );
         const depositFee = settingsData[0].keyvalue;
-        const amountusd = Math.round(postData.fiat_amount)-depositFee;
+        const amountusd = Math.round(postData.fiat_amount);
         let depositAmount = amountusd - ((amountusd / 100) * depositFee)
 
         const insert = await Qry(`insert into crypto_payments(userid, txid, address, coin, amount, amount_usd, confirms, status) values (?,?,?,?,?,?,?,?)`, [cryptoAddress[0].userid, postData.txn_id, postData.address,postData.currency, postData.amount, depositAmount,postData.confirms, postData.status_text]);
@@ -1853,7 +1853,7 @@ router.post("/buycontract", async (req, res) => {
       //       `;
       //   const mailOptions = {
       //     from: {
-      //       name: "Aura",
+      //       name: "Bank Of Tether",
       //       address: noreply_email,
       //     },
       //     to: {

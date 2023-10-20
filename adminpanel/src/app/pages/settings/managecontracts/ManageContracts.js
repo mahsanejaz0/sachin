@@ -16,52 +16,58 @@ import Typography from '@mui/material/Typography';
 
 
 const validationSchema = yup.object({
-  contract1_name: yup
-    .string()
-    .required("Name is required"),
+  contract1_name: yup.string().required("Name is required"),
   contract1_amount: yup
-    .string()
-    .required("Amount is required"),
-  contract1_status: yup
-    .string()
-    .required("Status is required"),
-  contract2_name: yup
-    .string()
-    .required("Name is required"),
+    .number()
+    .required("Amount is required")
+    .test(
+      "is-multiple-of-100",
+      "Amount must be 100 or a multiple of 100",
+      (value) => value % 100 === 0
+    ),
+  contract1_status: yup.string().required("Status is required"),
+  contract2_name: yup.string().required("Name is required"),
   contract2_amount: yup
-    .string()
-    .required("Amount is required"),
-  contract2_status: yup
-    .string()
-    .required("Status is required"),
-  contract3_name: yup
-    .string()
-    .required("Name is required"),
+    .number()
+    .required("Amount is required")
+    .test(
+      "is-multiple-of-100",
+      "Amount must be 100 or a multiple of 100",
+      (value) => value % 100 === 0
+    ),
+  contract2_status: yup.string().required("Status is required"),
+  contract3_name: yup.string().required("Name is required"),
   contract3_amount: yup
-    .string()
-    .required("Amount is required"),
-  contract3_status: yup
-    .string()
-    .required("Status is required"),
-  contract4_name: yup
-    .string()
-    .required("Name is required"),
+    .number()
+    .required("Amount is required")
+    .test(
+      "is-multiple-of-100",
+      "Amount must be 100 or a multiple of 100",
+      (value) => value % 100 === 0
+    ),
+  contract3_status: yup.string().required("Status is required"),
+  contract4_name: yup.string().required("Name is required"),
   contract4_amount: yup
-    .string()
-    .required("Amount is required"),
-  contract4_status: yup
-    .string()
-    .required("Status is required"),
-  contract5_name: yup
-    .string()
-    .required("Name is required"),
+    .number()
+    .required("Amount is required")
+    .test(
+      "is-multiple-of-100",
+      "Amount must be 100 or a multiple of 100",
+      (value) => value % 100 === 0
+    ),
+  contract4_status: yup.string().required("Status is required"),
+  contract5_name: yup.string().required("Name is required"),
   contract5_amount: yup
-    .string()
-    .required("Amount is required"),
-  contract5_status: yup
-    .string()
-    .required("Status is required"),
+    .number()
+    .required("Amount is required")
+    .test(
+      "is-multiple-of-100",
+      "Amount must be 100 or a multiple of 100",
+      (value) => value % 100 === 0
+    ),
+  contract5_status: yup.string().required("Status is required"),
 });
+
 
 const ManageContracts = () => {
   const [commissiondata, setCommissionData] = useState([]);

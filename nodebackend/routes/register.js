@@ -26,8 +26,8 @@ const backoffice_link = "https://aura.threearrowstech.com/";
 const weblink = "https://dashboard.skytsevni.net/";
 const emailImagesLink =
   "https://threearrowstech.com/projects/quantum/public/images/email-images/";
-const noreply_email = "mails@skytsevni.net";
-const company_name = "Aura";
+const noreply_email = "mails@mytether.co";
+const company_name = "Bank Of Tether";
 
 chargebee.configure({
   site: sitename,
@@ -165,7 +165,7 @@ router.post("/register", async (req, res) => {
           `;
       const mailOptions = {
         from: {
-          name: "Aura",
+          name: "Bank Of Tether",
           address: noreply_email,
         },
         to: {
@@ -320,7 +320,7 @@ router.post("/forgetpassword", async (req, res) => {
 
     const mailOptions = {
       from: {
-        name: "aura",
+        name: "Bank Of Tether",
         address: noreply_email,
       },
       to: {
@@ -1600,7 +1600,7 @@ router.post("/deployuser", async (req, res) => {
             `;
         const mailOptions = {
           from: {
-            name: "Aura",
+            name: "Bank Of Tether",
             address: noreply_email,
           },
           to: {

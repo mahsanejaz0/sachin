@@ -1,11 +1,11 @@
 const nodemailer = require('nodemailer');
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
-    host: 'threearrowstech.com',
+    host: 'mytether.co',
     port: 465,
     secure: true,
     auth: {
-      user: 'noreply@threearrowstech.com',
+      user: 'mails@mytether.co',
       pass: 'Ahsan@123',
     },
   });
