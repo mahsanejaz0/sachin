@@ -794,6 +794,8 @@ router.post("/dashboard", async (req, res) => {
         levelBonus = 0
       }
 
+      levelBonus = levelBonus.toFixed(2)
+
       const sponsorPayoutQuery = "SELECT SUM(final_amount) as total from transaction where receiverid = ? and type = ? and status = ?";
       const selectPayoutResult = await Qry(sponsorPayoutQuery, [authUser, 'payout', 'approved']);
 
@@ -806,14 +808,27 @@ router.post("/dashboard", async (req, res) => {
       const sponsorUserDataQuery = "SELECT pkgid from usersdata where id = ?";
       const selectUserDataResult = await Qry(sponsorUserDataQuery, [authUser]);
 
-      const sponsorContractDataQuery = "SELECT * from contracts where id = ?";
-      const selectContractDataResult = await Qry(sponsorContractDataQuery, [selectUserDataResult[0].pkgid]);
+      const sponsorContractDataQuery = `
+        SELECT SUM(c.amount) AS total_amount
+        FROM contracts AS c
+        INNER JOIN userpackages AS up ON c.id = up.pkgid
+        WHERE up.status = ? AND up.userid = ?;
+`;
+
+      const selectContractDataResult = await Qry(sponsorContractDataQuery, ['active', authUser]);
+
+      let total_contract_amount = selectContractDataResult[0].total_amount
+
+      if (total_contract_amount === '' || total_contract_amount === null) {
+        total_contract_amount = 0
+      }
+
 
       obj = {
         levelBonus: levelBonus,
         payout: payout,
-        contractName: selectContractDataResult[0].name,
-        contractAmount: selectContractDataResult[0].amount
+        contractName: 'Active Contracts',
+        contractAmount: total_contract_amount
       }
 
       res.status(200).json(
@@ -1108,10 +1123,19 @@ router.post("/payoutrequest", async (req, res) => {
       );
       const type = CleanHTMLData(CleanDBData(postData.type));
 
-      const selectSumDepositQuery = "SELECT SUM(amount) as total FROM transaction WHERE type = ? and senderid = ?";
-      const selectSumDepositResult = await Qry(selectSumDepositQuery, ['deposit', authUser]);
+      // const selectSumDepositQuery = "SELECT SUM(amount) as total FROM transaction WHERE type = ? and senderid = ?";
+      // const selectSumDepositResult = await Qry(selectSumDepositQuery, ['deposit', authUser]);
 
-      let min_withdrawal = selectSumDepositResult[0].total
+      const sponsorContractDataQuery = `
+        SELECT SUM(c.amount) AS total_amount
+        FROM contracts AS c
+        INNER JOIN userpackages AS up ON c.id = up.pkgid
+        WHERE up.status = ? AND up.userid = ?;
+`;
+
+      const selectContractDataResult = await Qry(sponsorContractDataQuery, ['active', authUser]);
+
+      let min_withdrawal = selectContractDataResult[0].total_amount
 
       if (min_withdrawal === '' || min_withdrawal === null) {
         min_withdrawal = 0
@@ -1184,6 +1208,40 @@ router.post("/payoutrequest", async (req, res) => {
       res.status(200).json({
         status: "success",
         message: message,
+      });
+    }
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({ status: "error", message: e });
+  }
+});
+
+
+router.post("/payoutdata", async (req, res) => {
+  try {
+    const authUser = await checkAuthorization(req, res);
+    if (authUser) {
+
+      const sponsorContractDataQuery = `
+        SELECT SUM(c.amount) AS total_amount
+        FROM contracts AS c
+        INNER JOIN userpackages AS up ON c.id = up.pkgid
+        WHERE up.status = ? AND up.userid = ?;
+`;
+
+      const selectContractDataResult = await Qry(sponsorContractDataQuery, ['active', authUser]);
+
+      let min_withdrawal = selectContractDataResult[0].total_amount
+
+      if (min_withdrawal === '' || min_withdrawal === null) {
+        min_withdrawal = 0
+      }
+
+      let amount = (min_withdrawal / 100) * 10
+
+      res.status(200).json({
+        status: "success",
+        data: amount
       });
     }
   } catch (e) {

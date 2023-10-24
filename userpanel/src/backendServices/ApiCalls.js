@@ -78,7 +78,7 @@ export function authenticate(service, callback, errorCallback) {
 
 export function getproduct(callback, errorCallback) {
   updateAuthorizationHeader()
-  axios.post( API_BASE_URL+ '/getproduct',)
+  axios.post(API_BASE_URL + '/getproduct',)
     .then(response => {
       if (callback) {
         callback(response);
@@ -378,6 +378,24 @@ export function getDepositApi(callback, errorCallback) {
     });
 }
 
+export function getPayoutData(callback, errorCallback) {
+  updateAuthorizationHeader()
+
+  axios.post(API_BASE_URL + '/payoutdata', {
+
+  })
+    .then(response => {
+      if (callback) {
+        callback(response);
+      }
+    })
+    .catch(error => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    });
+}
+
 export function payoutrequest(params, callback, errorCallback) {
   updateAuthorizationHeader()
   axios.post(API_BASE_URL + '/payoutrequest', params, {})
@@ -432,7 +450,7 @@ export function invitation(params, callback, errorCallback) {
     });
 }
 
-export function adminwallet(params,callback, errorCallback) {
+export function adminwallet(params, callback, errorCallback) {
   updateAuthorizationHeader()
   axios.post(API_BASE_URL + '/getadminwallet', params)
     .then(response => {
@@ -507,7 +525,7 @@ export function getBinaryTreeData(userrandomcode, callback, errorCallback) {
     });
 }
 
-export function updateProfileData(formdata,callback, errorCallback) {
+export function updateProfileData(formdata, callback, errorCallback) {
   updateAuthorizationHeader()
   axios.post(API_BASE_URL + '/updateprofiledata', formdata)
     .then(response => {
@@ -541,7 +559,7 @@ export function updateProfilePicture(formdata, callback, errorCallback) {
 
 export function updateProfilePassword(oldpassword, newpassword, callback, errorCallback) {
   updateAuthorizationHeader()
-  axios.post(API_BASE_URL + '/updatepassword',  {
+  axios.post(API_BASE_URL + '/updatepassword', {
     oldpassword,
     newpassword
   }, {
@@ -680,7 +698,7 @@ export function validateEmailToken(token, email, callback, errorCallback) {
 
 export function verifyemailaccount(token, email, callback, errorCallback) {
   updateAuthorizationHeader()
-  axios.post(API_BASE_URL + '/verifyemailaccount',  {
+  axios.post(API_BASE_URL + '/verifyemailaccount', {
     token,
     email
   })
@@ -700,7 +718,7 @@ export function verifyemailaccount(token, email, callback, errorCallback) {
 
 
 
-export  function getsingledepositwallet(params,callback, errorCallback) {
+export function getsingledepositwallet(params, callback, errorCallback) {
   updateAuthorizationHeader()
 
   axios.post(`${API_BASE_URL}/${'getsingledepositwallet'}`, params)

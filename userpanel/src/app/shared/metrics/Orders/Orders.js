@@ -29,6 +29,12 @@ const Orders = ({ data, handleClick }) => {
         status = false
     }
 
+    let grwothh = (data?.total_roi / contractAmount) * 100
+
+    if (grwothh > 100) {
+        grwothh = 100
+    }
+
 
     return (
         <JumboCardQuick
@@ -51,12 +57,19 @@ const Orders = ({ data, handleClick }) => {
                     <TrendingDown fontSize={"small"} sx={{ verticalAlign: 'middle', ml: 1 }} />
                 </Span>
                 <br></br>
-                <br></br>
-                <Typography variant='p' color={'red'}>You can transfer minimum 10% profit of your contract amount.</Typography>
+                {/* <Typography color={'red'} variant={"p"}>Your contract will expire, when you get 100% profit of your contract amount.</Typography> */}
+            </Typography>
+            <Typography variant={"body1"}>Growth:
+                <Span sx={{ color: 'success.main', ml: 1 }}>{grwothh}%
+                    <TrendingDown fontSize={"small"} sx={{ verticalAlign: 'middle', ml: 1 }} />
+                </Span>
                 <br></br>
                 <br></br>
                 {/* <Typography color={'red'} variant={"p"}>Your contract will expire, when you get 100% profit of your contract amount.</Typography> */}
             </Typography>
+            <Typography variant='p' color={'red'}>You can transfer minimum 10% profit of your contract amount.</Typography>
+            <br></br>
+            <br></br>
             <Button onClick={() => handleClick(data?.id)} disabled={status} variant='contained'>Transfer To E-Wallet</Button>
             {/* <Typography variant='p' color={'red'}>You can transfer minimum 10% profit of your contract amount.</Typography> */}
         </JumboCardQuick>
