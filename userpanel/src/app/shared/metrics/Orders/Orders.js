@@ -64,6 +64,13 @@ const Orders = ({ data, handleClick }) => {
                     <TrendingDown fontSize={"small"} sx={{ verticalAlign: 'middle', ml: 1 }} />
                 </Span>
                 <br></br>
+                {/* <Typography color={'red'} variant={"p"}>Your contract will expire, when you get 100% profit of your contract amount.</Typography> */}
+            </Typography>
+            <Typography variant={"body1"}>Transferred Profit:
+                <Span sx={{ color: 'success.main', ml: 1 }}>${data?.transfered_roi}
+                    <TrendingDown fontSize={"small"} sx={{ verticalAlign: 'middle', ml: 1 }} />
+                </Span>
+                <br></br>
                 <br></br>
                 {/* <Typography color={'red'} variant={"p"}>Your contract will expire, when you get 100% profit of your contract amount.</Typography> */}
             </Typography>

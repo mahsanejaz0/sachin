@@ -2273,50 +2273,36 @@ router.post("/payoutaction", async (req, res) => {
         const company = company_name;
 
 
-        // const title = "Payout Approved";
-        // const emailimg = emailImagesLink + 'payout.png';
-        // const heading = "Payout Approved";
-        // const subheading = "The recent payout request is approved successfully";
-        // const body = '<p style="text-align:left">Hello ' + username + ' <br> your payout request of $' + transactionData.amount + ' successfully approved  and sent to your desired account</p>';
+        const title = "Payout Approved";
+        const emailimg = emailImagesLink + 'payout.png';
+        const heading = "Payout Approved";
+        const subheading = "The recent payout request is approved successfully";
+        const body = '<p style="text-align:left">Hello ' + username + ' <br> your payout request of $' + transactionData.amount + ' successfully approved  and sent to your desired account</p>';
 
 
-        // const mailOptions = {
-        //   from: {
-        //     name: "Bank Of Tether",
-        //     address: noreply_email,
-        //   },
-        //   to: {
-        //     name: username,
-        //     address: email,
-        //   },
-        //   subject: "Payout Approved on " + company_name,
-        //   html: emailTemplate(
-        //     title,
-        //     emailimg,
-        //     heading,
-        //     subheading,
-        //     body,
-        //     company_name
-        //   ),
-        //   text: body,
-        // };
+        const mailOptions = {
+          from: {
+            name: "Bank Of Tether",
+            address: noreply_email,
+          },
+          to: {
+            name: username,
+            address: email,
+          },
+          subject: "Payout Approved on " + company_name,
+          html: emailTemplate(
+            title,
+            emailimg,
+            heading,
+            subheading,
+            body,
+            company_name
+          ),
+          text: body,
+        };
 
-        // transporter.sendMail(mailOptions, (err, info) => {
-        //   if (err) {
-        //     console.error("Error sending email:", err);
-        //     res.json({
-        //       status: "success",
-        //       message: "withdrawal approved but email not sent",
-        //       error: err,
-        //     });
-        //   } else {
-        //     res.json({
-        //       status: "success",
-        //       message:
-        //         "withdrawal approved successfully",
-        //     });
-        //   }
-        // });
+        transporter.sendMail(mailOptions, (err, info) => {
+        });
 
         res.json({
           status: "success",
@@ -2343,56 +2329,42 @@ router.post("/payoutaction", async (req, res) => {
           "UPDATE usersdata SET current_balance = current_balance + ? WHERE id = ?";
         await Qry(updateUserQuery, [payoutAmount, userid]);
 
-        // Email variables
-        //     const company = company_name;
-        //     const title = "Payout Rejected";
-        //     const emailimg = emailImagesLink + 'payout.png';
-        //     const heading = "Payout Rejected";
-        //     const subheading = "The recent payout request is rejected";
-        //     const body = `<p style="text-align:left">Hello ${username} <br> your payout request of $${transactionData.amount} has been rejected
-        //     <br>
-        //     <b>Reason: ${reason}</b>
-        //     </p>
-        // `
+        // email
+        const company = company_name;
+        const title = "Payout Rejected";
+        const emailimg = emailImagesLink + 'payout.png';
+        const heading = "Payout Rejected";
+        const subheading = "The recent payout request is rejected";
+        const body = `<p style="text-align:left">Hello ${username} <br> your payout request of $${transactionData.amount} has been rejected
+            <br>
+            <b>Reason: ${reason}</b>
+            </p>
+        `
 
 
-        // const mailOptions = {
-        //   from: {
-        //     name: "Bank Of Tether",
-        //     address: noreply_email,
-        //   },
-        //   to: {
-        //     name: username,
-        //     address: email,
-        //   },
-        //   subject: "Payout Rejected on " + company_name,
-        //   html: emailTemplate(
-        //     title,
-        //     emailimg,
-        //     heading,
-        //     subheading,
-        //     body,
-        //     company_name
-        //   ),
-        //   text: body,
-        // };
+        const mailOptions = {
+          from: {
+            name: "Bank Of Tether",
+            address: noreply_email,
+          },
+          to: {
+            name: username,
+            address: email,
+          },
+          subject: "Payout Rejected on " + company_name,
+          html: emailTemplate(
+            title,
+            emailimg,
+            heading,
+            subheading,
+            body,
+            company_name
+          ),
+          text: body,
+        };
 
-        // transporter.sendMail(mailOptions, (err, info) => {
-        //   if (err) {
-        //     console.error("Error sending email:", err);
-        //     res.json({
-        //       status: "success",
-        //       message: "withdrawal rejected but email not sent",
-        //       error: err,
-        //     });
-        //   } else {
-        //     res.json({
-        //       status: "success",
-        //       message:
-        //         "withdrawal rejected successfully",
-        //     });
-        //   }
-        // });
+        transporter.sendMail(mailOptions, (err, info) => {
+        });
 
         res.json({
           status: "success",

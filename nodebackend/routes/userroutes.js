@@ -1205,6 +1205,53 @@ router.post("/payoutrequest", async (req, res) => {
         ]
       );
 
+
+      //Email variables
+      const company = company_name;
+
+      const title = "Payout request on " + company;
+      const emailimg = emailImagesLink + "payout.png";
+      const heading = "Payout Request";
+      const subheading = "";
+
+      let username = userData.username
+      let email = userData.email
+
+      // Construct the email content
+      const body = `
+            <p style="text-align:left">Dear ${username} <br> You have requested payout successfully on ${company}. It will be verify soon. Thank You</p>
+
+            <p  style="text-align:left">
+            Thank you for choosing ${company}! <br>
+
+            Best regards,<br>
+            The ${company} Team
+            </p>
+          `;
+      const mailOptions = {
+        from: {
+          name: "Bank Of Tether",
+          address: noreply_email,
+        },
+        to: {
+          name: username,
+          address: email,
+        },
+        subject: "Payout request on " + company_name,
+        html: emailTemplate(
+          title,
+          emailimg,
+          heading,
+          subheading,
+          body,
+          company_name
+        ),
+        text: body,
+      };
+
+      transporter.sendMail(mailOptions, (err, info) => {
+      });
+
       res.status(200).json({
         status: "success",
         message: message,
@@ -1427,10 +1474,7 @@ router.post("/ipn", async (req, res) => {
       const txnData = await Qry(`select * from crypto_payments where txid = ?`, [postData.txn_id])
       if (txnData.length > 0) {
         const update = await Qry(`update crypto_payments set confirms = ? , status = ? where txid = ?`, [postData.confirms, postData.status_text, postData.txn_id])
-        if (update) {
-          res.status(200).json({ status: "success" });
 
-        }
       } else {
 
         const settingsData = await Qry(
@@ -1440,17 +1484,70 @@ router.post("/ipn", async (req, res) => {
           ]
         );
         const depositFee = settingsData[0].keyvalue;
-        const amountusd = Math.round(postData.fiat_amount);
-        let depositAmount = amountusd - ((amountusd / 100) * depositFee)
+        const amountusd = postData.fiat_amount;
+        let depositAmount1 = amountusd - ((amountusd / 100) * depositFee)
+
+        var depositAmount = parseFloat(depositAmount1.toFixed(2));
 
         const insert = await Qry(`insert into crypto_payments(userid, txid, address, coin, amount, amount_usd, confirms, status) values (?,?,?,?,?,?,?,?)`, [cryptoAddress[0].userid, postData.txn_id, postData.address, postData.currency, postData.amount, depositAmount, postData.confirms, postData.status_text]);
         const update_user = await Qry(`update usersdata set current_balance = current_balance+? where id = ?`, [depositAmount, cryptoAddress[0].userid]);
-        if (insert && update_user) {
-          res.status(200).json({ status: "success" });
-        }
+
       }
 
     }
+
+    // mail
+
+
+    //Email variables
+    const company = company_name;
+
+    const title = "Deposit on " + company;
+    const emailimg = emailImagesLink + "payout.png";
+    const heading = "Deposit Successfully";
+    const subheading = "";
+
+    const usersData = await Qry(`select username, email from usersdata where id = ?`, [cryptoAddress[0].userid])
+    let username = usersData[0].username
+    let email = usersData[0].email
+
+    // Construct the email content
+    const body = `
+            <p style="text-align:left">Dear ${username} <br> Thank you for deposit with ${company}! We are delighted to have you on board.</p>
+
+            <p  style="text-align:left">
+            Thank you for choosing ${company}! <br>
+
+            Best regards,<br>
+            The ${company} Team
+            </p>
+          `;
+    const mailOptions = {
+      from: {
+        name: "Bank Of Tether",
+        address: noreply_email,
+      },
+      to: {
+        name: username,
+        address: email,
+      },
+      subject: "Deposit successfully on " + company_name,
+      html: emailTemplate(
+        title,
+        emailimg,
+        heading,
+        subheading,
+        body,
+        company_name
+      ),
+      text: body,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+    });
+
+    res.status(200).json({ status: "success" });
+
   } catch (e) {
     console.log(e.message)
     res.status(500).json({ status: "error", message: e.message });
@@ -1890,78 +1987,58 @@ router.post("/buycontract", async (req, res) => {
         }
       }
 
+
+      //Email variables
+      const company = company_name;
+
+      const title = "Purchase Contract on " + company;
+      const emailimg = emailImagesLink + "welcome.png";
+      const heading = "Purchase Contract Successfully";
+      const subheading = "";
+
+      let username = userData.username
+      let email = userData.email
+
+      // Construct the email content
+      const body = `
+            <p style="text-align:left">Dear ${username} <br> Thank you for purchasing contract with ${company}. You have successfully purchased contract of amount $${pkgData.amount}</p>
+
+            <p  style="text-align:left">
+            Thank you for choosing ${company}! <br>
+
+            Best regards,<br>
+            The ${company} Team
+            </p>
+          `;
+      const mailOptions = {
+        from: {
+          name: "Bank Of Tether",
+          address: noreply_email,
+        },
+        to: {
+          name: username,
+          address: email,
+        },
+        subject: "Purchase contract successfully on " + company_name,
+        html: emailTemplate(
+          title,
+          emailimg,
+          heading,
+          subheading,
+          body,
+          company_name
+        ),
+        text: body,
+      };
+
+      transporter.sendMail(mailOptions, (err, info) => {
+      });
+
       res.json({
         status: "success",
         message: `You have successfully purchased a contract of amount $${pkgData.amount}`,
       });
 
-      // if (updateUser.affectedRows > 0 && insertPkg.affectedRows > 0) {
-      //   // Email variables
-      //   const company = company_name;
-      //   const title = "Package upgraded successfully " + company;
-      //   const emailimg = emailImagesLink + "welcome.png";
-      //   const heading = "Package Upgraded";
-      //   const subheading = "";
-
-      //   // Construct the email content
-      //   const body = `
-      //         <p style="text-align:left">Dear ${username} <br> you hae successfully purchased the package of amount $${pkgData.amount}:</p>
-
-      //         <p style="text-align:left">
-      //         keep upgrading for seamless benefits:
-      //         </p>
-
-      //         <p style="text-align:left">
-      //         Please note that your account must be verified to ensure the security of your information and provide a seamless user experience. If you have any questions or need assistance, please don't hesitate to reach out to our support team at info@aura.com or chat with a support at <a href="https://app.aura.com">https://app.aura.com</a>
-      //         </p>
-      //         <p  style="text-align:left">
-      //         Thank you for choosing ${company}! <br>
-
-      //         Best regards,<br>
-      //         The ${company} Team
-      //         </p>
-      //       `;
-      //   const mailOptions = {
-      //     from: {
-      //       name: "Bank Of Tether",
-      //       address: noreply_email,
-      //     },
-      //     to: {
-      //       name: username,
-      //       address: email,
-      //     },
-      //     subject: "Package Upgraded",
-      //     html: emailTemplate(
-      //       title,
-      //       emailimg,
-      //       heading,
-      //       subheading,
-      //       body,
-      //       company_name
-      //     ),
-      //     text: body,
-      //   };
-
-      //   transporter.sendMail(mailOptions, (err, info) => {
-      //     if (err) {
-      //       console.error("Error sending email:", err);
-      //       res.json({
-      //         status: "success",
-      //         message: "Package purchased successfully - email not sent",
-      //       });
-      //     } else {
-      //       res.json({
-      //         status: "success",
-      //         message: `You have successfully purchased a package of amount $${pkgData.amount}`,
-      //       });
-      //     }
-      //   });
-      // } else {
-      //   res.json({
-      //     status: "error",
-      //     message: "Server error occurred in registration",
-      //   });
-      // }
     }
   } catch (error) {
     console.log(error)
@@ -2003,8 +2080,8 @@ router.post("/transferroi", async (req, res) => {
       }
 
       updateSponsorBalance = await Qry("update usersdata set current_balance = current_balance + ? where id = ?", [roiAmount, authUser])
-      updateSponsorBalance = await Qry("update userpackages set roi = ? where id = ?", [0, id])
-      insertTransaction = await Qry("insert into transaction ( receiverid, senderid, amount, type, details) values ( ? , ? , ? ,? , ?)", [authUser, 0, roiAmount, 'ROI Transfer', `You have transfer $${roiAmount} to your E-Wallet`])
+      updateSponsorBalance = await Qry("update userpackages set roi = ?, transfered_roi = transfered_roi + ? where id = ?", [0, roiAmount, id])
+      insertTransaction = await Qry("insert into transaction ( receiverid, senderid, pkgid, amount, type, details) values ( ?, ?, ? ,?, ?, ? )", [authUser, 0, contractData.id, roiAmount, 'ROI Transfer', `You have transfer $${roiAmount} to your E-Wallet`])
 
       const selectUserQuery = `select uc.*, c.name, c.amount from userpackages uc 
       LEFT JOIN contracts c ON uc.pkgid = c.id 
@@ -2131,6 +2208,57 @@ router.post("/roicronjob", async (req, res) => {
             `Your contract is expired. You have got $${contractAmount} to yout E-Wallet`,
           ]
         );
+
+
+        //Email variables
+        const company = company_name;
+
+        const title = "Contract Expired on " + company;
+        const emailimg = emailImagesLink + "welcome.png";
+        const heading = "Contract Expired";
+        const subheading = "";
+
+        const selectUsersDataQuery = `SELECT username, email from usersdata where id = ?`;
+        const selectUsersDataResult = await Qry(selectUsersDataQuery, [data.userid]);
+
+        let username = selectUsersDataResult[0].username
+        let email = selectUsersDataResult[0].email
+
+        // Construct the email content
+        const body = `
+            <p style="text-align:left">Dear ${username} <br> Your contract has been expired on ${company}.</p>
+
+            <p  style="text-align:left">
+            Thank you for choosing ${company}! <br>
+
+            Best regards,<br>
+            The ${company} Team
+            </p>
+          `;
+        const mailOptions = {
+          from: {
+            name: "Bank Of Tether",
+            address: noreply_email,
+          },
+          to: {
+            name: username,
+            address: email,
+          },
+          subject: "Contract expired successfully on " + company_name,
+          html: emailTemplate(
+            title,
+            emailimg,
+            heading,
+            subheading,
+            body,
+            company_name
+          ),
+          text: body,
+        };
+
+        transporter.sendMail(mailOptions, (err, info) => {
+        });
+
       }
 
     });
