@@ -96,7 +96,7 @@ const BuyContract = () => {
 
       <Grid item sm={5}>
         <JumboDemoCard
-          title={"BUy Contract"}
+          title={"Buy Contract"}
           wrapperSx={{ backgroundColor: "background.paper", pt: 0 }}
         >
 

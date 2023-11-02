@@ -19,9 +19,9 @@ const Footer = ({loginUserData}) => {
             <Div sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Typography variant={"body1"} color={"text.primary"}>{companyName} ©  2023  All rights reserved </Typography>
 
-                {
+                {/* {
                    <Typography variant={"body1"} sx={{}} color={"text.primary"}>Powered By <a href="https://threearrowstech.com" target='_blank'><b>Three Arrows Tech</b></a></Typography>
-                }
+                } */}
                 
 
             </Div>
